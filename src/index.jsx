@@ -10,7 +10,7 @@ import "@rainbow-me/rainbowkit/styles.css"
 import { configureApp } from "./utils/configureApp"
 
 // RainbowKit
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit"
+import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit"
 import { WagmiConfig } from "wagmi"
 
 const { chains, wagmiClient } = configureApp()

@@ -14,7 +14,7 @@ const useAccount = () => {
     })
 
     useEffect(() => {
-        if (isConnected) {
+        if (isConnected && signer) {
             setAccountDetails({ address, signer, provider })
         }
     }, [address, isConnected, signer, provider])
