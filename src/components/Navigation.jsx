@@ -19,7 +19,12 @@ const Navigation = () => {
 
             <div className="rainbowkit-box">
                 <div className="rainbowkit-connect-btn">
-                    <ConnectButton />
+                    <ConnectButton
+                        showBalance={false}
+                        chainStatus="icon"
+                        accountStatus="address"
+                        className="flex justify-end items-center"
+                    />
                 </div>
             </div>
         </div>
