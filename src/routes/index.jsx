@@ -1,9 +1,12 @@
 import React from 'react';
-import { 
-    HashRouter, 
-    Route, 
-    Routes
+import {
+  HashRouter,
+  Route,
+  Routes
 } from 'react-router-dom';
+
+// Components
+import Navigation from '../components/Navigation';
 
 // Pages
 import HomePage from '../pages/HomePage';
@@ -12,10 +15,11 @@ import NotFoundPage from '../pages/NotFoundPage';
 
 const PageRoutes = () => (
   <HashRouter>
+    <Navigation />
     <Routes>
-      <Route exact path="/" component={HomePage} />
-      <Route path="/about" component={AboutPage} />
-      <Route component={NotFoundPage} />
+      <Route exact path="/" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route element={<NotFoundPage />} />
     </Routes>
   </HashRouter>
 );
