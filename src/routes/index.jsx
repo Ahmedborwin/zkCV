@@ -9,9 +9,9 @@ import {
 import Navigation from '../components/Navigation';
 
 // Pages
-import HomePage from '../pages/HomePage';
-import AboutPage from '../pages/AboutPage';
-import NotFoundPage from '../pages/NotFoundPage';
+import HomePage from "../pages/HomePage"
+import AboutPage from "../pages/AboutPage"
+import NotFoundPage from "../pages/NotFoundPage"
 
 const PageRoutes = () => (
   <HashRouter>
@@ -24,4 +24,4 @@ const PageRoutes = () => (
   </HashRouter>
 );
 
-export default PageRoutes;
+export default PageRoutes
