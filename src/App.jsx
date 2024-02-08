@@ -1,24 +1,17 @@
 import React from 'react';
 import PageRoutes from './routes';
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-
-// css
-import '@rainbow-me/rainbowkit/styles.css';
-import './App.css';
+// Components
+import { FadeIn } from './components/FadeIn';
+import Container from './components/Container';
 
 const App = () => {
-
   return (
-    <div className="app-container">
-      <div className="rainbowkit-box">
-        <div className="rainbowkit-connect-btn">
-          <ConnectButton />
-        </div>
-      </div>
-
-      <PageRoutes />
-    </div>
+    <Container>
+      <FadeIn>
+        <PageRoutes />
+      </FadeIn>
+    </Container>
   );
 };
 

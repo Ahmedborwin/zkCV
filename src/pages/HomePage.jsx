@@ -1,17 +1,14 @@
-import React from "react"
-import TestAttestation from "../components/TestAttestation"
+import React from "react";
 
-import useWalletConnected from "../hooks/useAccount"
+// Components
+import TestAttestation from "../components/TestAttestation";
 
-const HomePage = () => {
-    const { chain, address } = useWalletConnected()
+const HomePage = () => (
+  <div className="flex flex-col items-center my-2">
+    <div className="flex w-3/4 flex-col bg-[#131315] px-12 py-10 rounded-3xl my-2">
+      <TestAttestation />
+    </div>
+  </div>
+);
 
-    return (
-        <div>
-            <h1 className="text-white">TEST</h1>
-            <TestAttestation />
-        </div>
-    )
-}
-
-export default HomePage
+export default HomePage;
