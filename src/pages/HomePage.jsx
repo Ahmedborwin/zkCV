@@ -1,10 +1,17 @@
-import React from "react";
-import TestAttestation from "../components/TestAttestation";
+import React from "react"
+import TestAttestation from "../components/TestAttestation"
 
-const HomePage = () => (
-  <div>
-    <TestAttestation />
-  </div>
-);
+import useWalletConnected from "../hooks/useAccount"
 
-export default HomePage;
+const HomePage = () => {
+    const { chain, address } = useWalletConnected()
+
+    return (
+        <div>
+            <h1 className="text-white">TEST</h1>
+            <TestAttestation />
+        </div>
+    )
+}
+
+export default HomePage
