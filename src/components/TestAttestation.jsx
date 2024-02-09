@@ -29,7 +29,7 @@ const TestAttestation = () => {
                 accountDetails.signer
             )
 
-            const schema = "bytes32 hashOfCV, address CVOwner, bytes semaphoreIdentity"
+            const schema = "bytes32 hashOfCV, address CVOwner"
             const resolverAddress = "0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0"
             const revocable = true
 
@@ -50,9 +50,7 @@ const TestAttestation = () => {
     const handleAttestation = async () => {
         try {
             // Initialize SchemaEncoder with the schema string
-            const schemaEncoder = new SchemaEncoder(
-                "bytes32 hashOfCV, address CVOwner, bytes semaphoreIdentity"
-            )
+            const schemaEncoder = new SchemaEncoder("bytes32 hashOfCV, address CVOwner")
             const encodedData = schemaEncoder.encodeData([
                 {
                     name: "hashOfCV",
@@ -63,11 +61,6 @@ const TestAttestation = () => {
                     name: "CVOwner",
                     value: "0x6075F7cBD3026783e45312Bfb689ACC5ADcD8649",
                     type: "address",
-                },
-                {
-                    name: "semaphoreIdentity",
-                    value: "0x6075F7cBD3026783e45312Bfb689ACC5ADcD8649",
-                    type: "bytes",
                 },
             ])
 
@@ -91,12 +84,20 @@ const TestAttestation = () => {
         }
     }
 
+    const handleGetAttestation = async () => {
+        try {
+            const attestation = await eas.getAttestation(attestationUID)
+
+            console.log(attestation)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const handleOffChainAttestation = async () => {
         try {
             // Initialize SchemaEncoder with the schema string
-            const schemaEncoder = new SchemaEncoder(
-                "bytes32 hashOfCV, address CVOwner, bytes semaphoreIdentity"
-            )
+            const schemaEncoder = new SchemaEncoder("bytes32 hashOfCV, address CVOwner")
 
             const offchain = await eas.getOffchain()
 
@@ -111,11 +112,6 @@ const TestAttestation = () => {
                     value: "0x6075F7cBD3026783e45312Bfb689ACC5ADcD8649",
                     type: "address",
                 },
-                {
-                    name: "semaphoreIdentity",
-                    value: "0x6075F7cBD3026783e45312Bfb689ACC5ADcD8649",
-                    type: "bytes",
-                },
             ])
 
             console.log("encodedData", encodedData)
@@ -126,7 +122,7 @@ const TestAttestation = () => {
                     // Unix timestamp of when attestation expires. (0 for no expiration)
                     expirationTime: 0,
                     // Unix timestamp of current time
-                    time: 1671219636,
+                    time: Math.floor(Date.now() / 1000),
                     revocable: true, // Be aware that if your schema is not revocable, this MUST be false
                     version: 1,
                     nonce: 0,
@@ -136,22 +132,9 @@ const TestAttestation = () => {
                 },
                 accountDetails.signer
             )
-
-            const newAttestationUID = await tx.wait()
-
+            // const newAttestationUID = await attestation.wait()
             setOffChainAttestation(attestation)
-
-            console.log("New attestation UID:", newAttestationUID)
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-    const handleGetAttestation = async () => {
-        try {
-            const attestation = await eas.getAttestation(attestationUID)
-
-            console.log(attestation)
+            console.log("New attestation:", attestation)
         } catch (error) {
             console.error(error)
         }
@@ -159,15 +142,17 @@ const TestAttestation = () => {
 
     const verifyOffChainAttestation = async () => {
         try {
+            console.log(offChainAttestation)
             const EAS_CONFIG = {
-                address: offChainAttestation.sig.domain.verifyingContract,
-                version: offChainAttestation.sig.domain.version,
-                chainId: offChainAttestation.sig.domain.chainId,
+                address: offChainAttestation.domain.verifyingContract,
+                version: offChainAttestation.domain.version,
+                chainId: offChainAttestation.domain.chainId,
             }
+
             const offchain = new Offchain(EAS_CONFIG, OFFCHAIN_ATTESTATION_VERSION)
             const isValidAttestation = offchain.verifyOffchainAttestationSignature(
-                offChainAttestation.signer,
-                offChainAttestation.sig
+                accountDetails.signer,
+                offChainAttestation.signature
             )
             console.log("isValidAttestation", isValidAttestation)
         } catch (error) {

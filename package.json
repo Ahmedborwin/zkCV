@@ -13,6 +13,8 @@
   "devDependencies": {
     "@ethereum-attestation-service/eas-sdk": "^1.4.2",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.1",
+    "@semaphore-protocol/contracts": "^4.0.0-alpha.6",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.0.0",
