@@ -7,7 +7,6 @@ typechain-types
 
 #Hardhat files
 cache
-artifacts
 Media
 
 node_modules
@@ -17,7 +16,19 @@ coverage.json
 typechain
 typechain-types
 
-# Hardhat files
-cache
-artifacts
 
+
+node_modules
+.env
+
+# Hardhat files
+/cache
+/artifacts
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json

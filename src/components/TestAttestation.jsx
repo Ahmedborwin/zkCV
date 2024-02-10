@@ -4,23 +4,18 @@ import {
     SchemaEncoder,
     OFFCHAIN_ATTESTATION_VERSION,
     Offchain,
-    PartialTypedDataConfig,
 } from "@ethereum-attestation-service/eas-sdk"
 
 import useWalletConnected from "../hooks/useAccount"
 import useEasSdk from "../hooks/useEAS"
 
 const TestAttestation = () => {
-    const { accountDetails, chain } = useWalletConnected()
+    const { accountDetails } = useWalletConnected()
     const { eas } = useEasSdk()
 
     const [schemaId, setSchemaId] = useState(null)
     const [attestationUID, setAttestationUID] = useState(null)
     const [offChainAttestation, setOffChainAttestation] = useState(null)
-
-    console.log("signer", accountDetails.signer)
-    console.log("address", accountDetails.address)
-    console.log("provider", accountDetails.provider)
 
     const handleSubmitSchema = async () => {
         try {
@@ -29,8 +24,8 @@ const TestAttestation = () => {
                 accountDetails.signer
             )
 
-            const schema = "bytes32 hashOfCV, address CVOwner"
-            const resolverAddress = "0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0"
+            const schema = "bytes32 privatedata"
+            const resolverAddress = "0x0000000000000000000000000000000000000000"
             const revocable = true
 
             const transaction = await schemaRegistry.register({
@@ -84,6 +79,18 @@ const TestAttestation = () => {
         }
     }
 
+    const handleGetSchema = async () => {
+        const schemaRegistryContractAddress = "0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0" // Sepolia 0.26
+        const schemaRegistry = new SchemaRegistry(schemaRegistryContractAddress)
+        schemaRegistry.connect(accountDetails.provider)
+
+        const schemaUID = "0x20351f973fdec1478924c89dfa533d8f872defa108d9c3c6512267d7e7e5dbc2"
+
+        const schemaRecord = await schemaRegistry.getSchema({ uid: schemaUID })
+
+        console.log(schemaRecord)
+    }
+
     const handleGetAttestation = async () => {
         try {
             const attestation = await eas.getAttestation(attestationUID)
@@ -97,7 +104,7 @@ const TestAttestation = () => {
     const handleOffChainAttestation = async () => {
         try {
             // Initialize SchemaEncoder with the schema string
-            const schemaEncoder = new SchemaEncoder("bytes32 hashOfCV, address CVOwner")
+            const schemaEncoder = new SchemaEncoder("bytes32 hashOfCV ,string text")
 
             const offchain = await eas.getOffchain()
 
@@ -108,9 +115,9 @@ const TestAttestation = () => {
                     type: "bytes32",
                 },
                 {
-                    name: "CVOwner",
-                    value: "0x6075F7cBD3026783e45312Bfb689ACC5ADcD8649",
-                    type: "address",
+                    name: "text",
+                    value: "Ahmed Borwin",
+                    type: "string",
                 },
             ])
 
@@ -148,8 +155,10 @@ const TestAttestation = () => {
                 version: offChainAttestation.domain.version,
                 chainId: offChainAttestation.domain.chainId,
             }
+            console.log("EAS_CONFIG", EAS_CONFIG)
+            console.log("OFFCHAIN_ATTESTATION_VERSION", OFFCHAIN_ATTESTATION_VERSION)
 
-            const offchain = new Offchain(EAS_CONFIG, OFFCHAIN_ATTESTATION_VERSION)
+            const offchain = new Offchain(EAS_CONFIG, "1.3.0")
             const isValidAttestation = offchain.verifyOffchainAttestationSignature(
                 accountDetails.signer,
                 offChainAttestation.signature
@@ -177,6 +186,9 @@ const TestAttestation = () => {
             </button>
             <button className="text-lg p-5" onClick={() => verifyOffChainAttestation()}>
                 Verify offChain Attestation
+            </button>
+            <button className="text-lg p-5" onClick={() => handleGetSchema()}>
+                Handle Get Schema
             </button>
         </>
     )
