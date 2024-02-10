@@ -2,8 +2,8 @@ import React from 'react';
 import PageRoutes from './routes';
 
 // Components
-import { FadeIn } from './components/FadeIn';
-import Container from './components/Container';
+import FadeIn from './components/common/Effects/FadeIn';
+import Container from './components/common/Container';
 
 const App = () => {
   return (
