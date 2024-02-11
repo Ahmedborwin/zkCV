@@ -1,7 +1,7 @@
 import { mainnet, polygon, hardhat, sepolia, scrollSepolia, scrollTestnet } from "wagmi/chains"
-import { configureChains, createConfig, useAccount, useNetwork } from "wagmi"
+import { configureChains, createConfig } from "wagmi"
 import { publicProvider } from "wagmi/providers/public"
-import { getParticleNetwork, getPopularWallets } from "../../particle.config"
+import { getParticleNetwork, getPopularWallets } from "../../../particle.config"
 import { connectorsForWallets } from "@rainbow-me/rainbowkit"
 
 const createConnectors = (wallets) => {

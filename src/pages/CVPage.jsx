@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
+
+// Components
 import BentoGrid from "../components/common/Effects/BentoGrid";
 import FadeIn from '../components/common/Effects/FadeIn';
+import SubmitButton from '../components/common/Button/SubmitButton';
+import FormField from '../components/common/Form/FormField';
 
-const EmployeePage = () => {
+// Utils
+import { UI_AVATARS } from '../utils/constants';
+
+const CVPage = () => {
+    const [editMode, setEditMode] = useState(false);
     const [name, setName] = useState("John Doe");
     const [position, setPosition] = useState("Software Developer");
     const [skills, setSkills] = useState(["React", "Solidity", "JavaScript"]);
     const [avatarUrl, setAvatarUrl] = useState("");
 
     useEffect(() => {
-        setAvatarUrl(`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&color=7F9CF5&background=EBF4FF`);
+        setAvatarUrl(`${UI_AVATARS}/?name=${encodeURIComponent(name)}&color=7F9CF5&background=EBF4FF`);
     }, [name]);
 
     return (
@@ -18,15 +26,13 @@ const EmployeePage = () => {
                 <div className="flex flex-col items-center gap-6 bg-[#0369a1] p-8 rounded-xl shadow-xl">
                     <img src={avatarUrl} alt="Avatar" className="w-40 h-40 rounded-full border-4 border-white shadow" />
 
-                    <div className="w-full">
-                        <label className="block mb-2 text-sm font-bold text-white">Identity</label>
-                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full py-2 px-4 rounded-lg bg-[#ffffff20] text-white placeholder-[#e0e7ff] focus:ring-4 focus:ring-[#bfdbfe] shadow-inner" />
-                    </div>
+                    <FormField value={name} onChange={(e) => setName(e.target.value)}>
+                        Identity
+                    </FormField>
 
-                    <div className="w-full">
-                        <label className="block mb-2 text-sm font-bold text-white">Position</label>
-                        <input type="text" value={position} onChange={(e) => setPosition(e.target.value)} className="w-full py-2 px-4 rounded-lg bg-[#ffffff20] text-white placeholder-[#e0e7ff] focus:ring-4 focus:ring-[#bfdbfe] shadow-inner" />
-                    </div>
+                    <FormField value={position} onChange={(e) => setPosition(e.target.value)}>
+                        Position
+                    </FormField>
 
                     <div className="w-full">
                         <label className="block mb-2 text-sm font-bold text-white">Skills</label>
@@ -38,10 +44,20 @@ const EmployeePage = () => {
                             ))}
                         </div>
                     </div>
+
+                    {!editMode &&
+                        <SubmitButton onClick={() => setEditMode(true)}>
+                            EDIT
+                        </SubmitButton>}
+
+                    {editMode &&
+                        <SubmitButton onClick={() => setEditMode(false)}>
+                            SAVE
+                        </SubmitButton>}
                 </div>
             </BentoGrid>
         </FadeIn>
     );
 };
 
-export default EmployeePage;
+export default CVPage;

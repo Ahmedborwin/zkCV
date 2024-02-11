@@ -12,16 +12,20 @@ import Navigation from '../components/Navigation';
 import HomePage from "../pages/HomePage"
 import AboutPage from "../pages/AboutPage"
 import NotFoundPage from "../pages/NotFoundPage"
-import EmployeePage from '../pages/EmployeePage';
-import EmployerPage from '../pages/EmployerPage';
+import ApplicantsPage from '../pages/ApplicantsPage';
+import CVPage from '../pages/CVPage';
+import JobAddPage from '../pages/JobAddPage';
+import JobsPage from '../pages/JobsPage';
 
 const PageRoutes = () => (
   <HashRouter>
     <Navigation />
     <Routes>
       <Route exact path="/" element={<HomePage />} />
-      <Route path="/employee" element={<EmployeePage />} />
-      <Route path="/employer" element={<EmployerPage />} />
+      <Route path="/applicants" element={<ApplicantsPage />} />
+      <Route path="/cv" element={<CVPage />} />
+      <Route path="/job" element={<JobAddPage />} />
+      <Route path="/jobs" element={<JobsPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route element={<NotFoundPage />} />
     </Routes>
