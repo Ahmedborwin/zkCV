@@ -14,10 +14,17 @@ async function main() {
     semaphoreVerifierAddress = sempahoreContracts.semaphoreVerifierAddress
     poseidonAddress = sempahoreContracts.poseidonAddress
 
-    // Link the library
-    const zkFactory = await ethers.getContractFactory("ZeroKnowledgeCV", {
+    const IncrementalBinaryTreeFactory = await ethers.getContractFactory("IncrementalBinaryTree", {
         libraries: {
             PoseidonT3: poseidonAddress,
+        },
+    })
+    const IncrementalBinaryTree = await IncrementalBinaryTreeFactory.deploy()
+
+    // Link the library
+    const zkFactory = await ethers.getContractFactory("zkCV", {
+        libraries: {
+            IncrementalBinaryTree: IncrementalBinaryTree.target,
         },
     })
 
