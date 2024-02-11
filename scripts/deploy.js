@@ -1,32 +1,38 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
+const hre = require("hardhat")
+const { run, ethers } = hre
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+    let semaphore, semaphoreVerifierAddress, poseidonAddress
+    const chainID = (await hre.ethers.provider.getNetwork()).chainId.toString()
 
-  const lockedAmount = hre.ethers.utils.parseEther("0.001");
+    //Deploy Semaphore Contracts using Task from "@semaphore-protocol/hardhat"
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+    const sempahoreContracts = await run("deploy:semaphore", {
+        logs: true,
+    })
+    semaphore = sempahoreContracts.semaphore
+    semaphoreVerifierAddress = sempahoreContracts.semaphoreVerifierAddress
+    poseidonAddress = sempahoreContracts.poseidonAddress
 
-  await lock.deployed();
+    const IncrementalBinaryTreeFactory = await ethers.getContractFactory("IncrementalBinaryTree", {
+        libraries: {
+            PoseidonT3: poseidonAddress,
+        },
+    })
+    const IncrementalBinaryTree = await IncrementalBinaryTreeFactory.deploy()
 
-  console.log(
-    `Lock with ${ethers.utils.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
+    // Link the library
+    const zkFactory = await ethers.getContractFactory("zkCV", {
+        libraries: {
+            IncrementalBinaryTree: IncrementalBinaryTree.target,
+        },
+    })
+
+    // Deploy the contract with the library linked
+    const zeroKnowledgeCV = await zkFactory.deploy(semaphoreVerifierAddress)
+    await zeroKnowledgeCV.waitForDeployment()
+    console.log(`ZeroKnowledgeCV deployed to: ${await zeroKnowledgeCV.getAddress()}`)
+    return { zeroKnowledgeCV, semaphoreVerifierAddress }
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+module.exports = { main }
