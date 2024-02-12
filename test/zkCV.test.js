@@ -5,6 +5,7 @@ const { main } = require("../scripts/deploy")
 const { Identity } = require("@semaphore-protocol/identity")
 const { Group } = require("@semaphore-protocol/group")
 const { generateProof, verifyProof } = require("@semaphore-protocol/proof")
+const { SemaphoreEthers, getSupportedNetworks } = require("@semaphore-protocol/data")
 const path = require("path")
 const hre = require("hardhat")
 require("../snark-artifacts/20/semaphore.json")
@@ -33,25 +34,26 @@ describe("zkCV", function () {
     })
     describe("Deployment", function () {
         it("zkCV is deployed", async () => {
-            await expect(zeroKnowledgeCV.createEntity(1, deployer.address, 20)).emit(
+            await expect(zeroKnowledgeCV.createGroup(1, deployer.address)).emit(
                 zeroKnowledgeCV,
-                "EntityCreated"
+                "GroupCreated"
             )
         })
         it("Add new applicant", async () => {
-            await zeroKnowledgeCV.createEntity(1, deployer.address, 20)
-            await expect(
-                zeroKnowledgeCV.connect(deployer).addApplicant(1, identity.commitment)
-            ).emit(zeroKnowledgeCV, "MemberAdded")
+            await zeroKnowledgeCV.createGroup(1, deployer.address)
+
+            await expect(zeroKnowledgeCV.connect(deployer).addMember(1, identity.commitment)).emit(
+                zeroKnowledgeCV,
+                "MemberAdded"
+            )
         })
-        it("submit application (using group library)", async () => {
+        it("submit application (using offchain group)", async () => {
             const group = new Group(1, 20)
             group.addMember(identity.commitment)
 
             // Adjust the relative path as necessary based on your project structure
             const wasmFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.wasm")
             const zkeyFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.zkey")
-            console.log(wasmFilePath) // Log the resolved path to debug
 
             const nullifierHash = 123456789
 
@@ -64,32 +66,52 @@ describe("zkCV", function () {
 
             expect(proofBool).equal(true)
         })
-        it("submit application", async () => {
+        it("submit application using Onchain Group", async () => {
             const groupId = 1
-            await zeroKnowledgeCV.createEntity(groupId, deployer.address, 20)
-            await zeroKnowledgeCV.connect(deployer).addApplicant(groupId, identity.commitment)
 
-            const groupRoot = await zeroKnowledgeCV._getMerkleTreeRoot(groupId)
+            await zeroKnowledgeCV.createGroup(groupId, deployer.address)
+
+            await zeroKnowledgeCV.connect(deployer).addMember(groupId, identity.commitment)
+
+            const groupRoot = await zeroKnowledgeCV.getMerkleTreeRoot(groupId)
+
+            const groupSize = await zeroKnowledgeCV.getMerkleTreeSize(groupId)
+
+            console.log("stage 2")
+            const zeroKnowledgeCVAddress = await zeroKnowledgeCV.getAddress()
+            console.log(zeroKnowledgeCVAddress)
+            const semaphoreEthers = new SemaphoreEthers("http://127.0.0.1:8545", {
+                address: zeroKnowledgeCVAddress,
+            })
+
+            const groupIds = await semaphoreEthers.getGroupIds()
+            const members = await semaphoreEthers.getGroupMembers(groupId.toString())
+
+            console.log("stage 3")
+
+            const group = new Group(groupId, groupSize, members)
+
+            console.log("identity", identity)
+            console.log("group", group)
+            console.log("groupRoot", groupRoot)
+            console.log("signal", signal)
+
+            const nullifierHash = 123456789
 
             // Adjust the relative path as necessary based on your project structure
             const wasmFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.wasm")
             const zkeyFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.zkey")
 
-            const fullProof = await generateProof(
-                identity.commitment,
-                { depth: 20 },
-                groupRoot,
-                signal,
-                {
-                    zkeyFilePath,
-                    wasmFilePath,
-                }
-            )
+            const fullProof = await generateProof(identity, group, nullifierHash, signal, {
+                zkeyFilePath,
+                wasmFilePath,
+            })
+            console.log("stage 4")
 
             //call submit application
             await expect(
                 zeroKnowledgeCV.submitApplication(signal, groupRoot, groupId, fullProof.proof)
-            ).emit(zeroKnowledgeCV, ApplicationSubmitted)
+            ).emit(zeroKnowledgeCV, "ApplicationSubmitted")
         })
     })
 })

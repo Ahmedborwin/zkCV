@@ -14,17 +14,10 @@ async function main() {
     semaphoreVerifierAddress = sempahoreContracts.semaphoreVerifierAddress
     poseidonAddress = sempahoreContracts.poseidonAddress
 
-    const IncrementalBinaryTreeFactory = await ethers.getContractFactory("IncrementalBinaryTree", {
+    // Link the library
+    const zkFactory = await ethers.getContractFactory("ZeroKnowledgeCV", {
         libraries: {
             PoseidonT3: poseidonAddress,
-        },
-    })
-    const IncrementalBinaryTree = await IncrementalBinaryTreeFactory.deploy()
-
-    // Link the library
-    const zkFactory = await ethers.getContractFactory("zkCV", {
-        libraries: {
-            IncrementalBinaryTree: IncrementalBinaryTree.target,
         },
     })
 
@@ -36,3 +29,9 @@ async function main() {
 }
 
 module.exports = { main }
+// main()
+//     .then(() => process.exit(0))
+//     .catch((error) => {
+//         console.error(error)
+//         process.exit(1)
+//     })
