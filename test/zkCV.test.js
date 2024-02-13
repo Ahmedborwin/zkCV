@@ -79,12 +79,13 @@ describe("zkCV", function () {
 
             console.log("stage 2")
             const zeroKnowledgeCVAddress = await zeroKnowledgeCV.getAddress()
-            console.log(zeroKnowledgeCVAddress)
+
             const semaphoreEthers = new SemaphoreEthers("http://127.0.0.1:8545", {
                 address: zeroKnowledgeCVAddress,
             })
 
             const groupIds = await semaphoreEthers.getGroupIds()
+            console.log(groupIds)
             const members = await semaphoreEthers.getGroupMembers(groupId.toString())
 
             console.log("stage 3")
