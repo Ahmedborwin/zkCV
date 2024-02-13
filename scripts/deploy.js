@@ -25,7 +25,7 @@ async function main() {
     const zeroKnowledgeCV = await zkFactory.deploy(semaphoreVerifierAddress)
     await zeroKnowledgeCV.waitForDeployment()
     console.log(`ZeroKnowledgeCV deployed to: ${await zeroKnowledgeCV.getAddress()}`)
-    return { zeroKnowledgeCV, semaphoreVerifierAddress }
+    return { semaphore, zeroKnowledgeCV, semaphoreVerifierAddress }
 }
 
 module.exports = { main }

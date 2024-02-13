@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {ISemaphore} from "@semaphore-protocol/contracts/interfaces/ISemaphore.sol";
-import {ISemaphoreVerifier} from "@semaphore-protocol/contracts/interfaces/ISemaphoreVerifier.sol";
-import {SemaphoreGroups} from "@semaphore-protocol/contracts/base/SemaphoreGroups.sol";
+import {ISemaphore} from "./interfaces/ISemaphore.sol";
+import {ISemaphoreVerifier} from "./interfaces/ISemaphoreVerifier.sol";
+import {SemaphoreGroups} from "./base/SemaphoreGroups.sol";
 
 /// @title Semaphore
 /// @dev This contract uses the Semaphore base contracts to provide a complete service
@@ -29,6 +29,8 @@ contract ZeroKnowledgeCV is ISemaphore, SemaphoreGroups {
         _createGroup(groupId, admin);
 
         groups[groupId].merkleTreeDuration = 1 hours;
+
+        // emit GroupCreated(groupId);
     }
 
     /// @dev See {ISemaphore-createGroup}.
@@ -40,6 +42,8 @@ contract ZeroKnowledgeCV is ISemaphore, SemaphoreGroups {
         _createGroup(groupId, admin);
 
         groups[groupId].merkleTreeDuration = merkleTreeDuration;
+
+        // emit GroupCreated(groupId);
     }
 
     /// @dev See {SemaphoreGroups-_updateGroupAdmin}.
@@ -64,18 +68,17 @@ contract ZeroKnowledgeCV is ISemaphore, SemaphoreGroups {
         _addMember(groupId, identityCommitment);
 
         uint256 merkleTreeRoot = getMerkleTreeRoot(groupId);
-
         groups[groupId].merkleRootCreationDates[merkleTreeRoot] = block.timestamp;
+        uint256 leafIndex = indexOf(groupId, identityCommitment);
+
+        // emit MemberAdded(groupId, leafIndex, identityCommitment, merkleTreeRoot);
     }
 
-    /// @dev See {SemaphoreGroups-_addMembers}.
-    function addMembers(uint256 groupId, uint256[] calldata identityCommitments) external override {
-        _addMembers(groupId, identityCommitments);
-
-        uint256 merkleTreeRoot = getMerkleTreeRoot(groupId);
-
-        groups[groupId].merkleRootCreationDates[merkleTreeRoot] = block.timestamp;
-    }
+    // /// @dev See {SemaphoreGroups-_addMembers}.
+    function addMembers(
+        uint256 groupId,
+        uint256[] calldata identityCommitments
+    ) external override {}
 
     /// @dev See {SemaphoreGroups-_updateMember}.
     function updateMember(

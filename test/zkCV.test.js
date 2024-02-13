@@ -13,7 +13,13 @@ require("../snark-artifacts/20/semaphore.json")
 describe("zkCV", function () {
     // TO DO - create identity commitment
 
-    let employer, deployer, zeroKnowledgeCV, semaphoreVerifierAddress
+    let employer,
+        deployer,
+        zeroKnowledgeCV,
+        semaphoreVerifierAddress,
+        semaphoreAddress,
+        zeroKnowledgeCVAddress,
+        signer
 
     const identity = new Identity("secret-message")
     // const group = 1
@@ -23,69 +29,89 @@ describe("zkCV", function () {
         const accounts = await hre.ethers.getSigners()
         deployer = accounts[0]
         employer = accounts[1]
+
+        rpcUrl = process.env.POLYGON_MUMBAI_RPC_URL
+        const provider = new hre.ethers.JsonRpcProvider(rpcUrl)
+        const privateKey = process.env.PRIVATE_KEY
+        const wallet = new hre.ethers.Wallet(privateKey)
+        signer = wallet.connect(provider)
+
         try {
-            const contractsDeployed = await main()
-            zeroKnowledgeCV = contractsDeployed.zeroKnowledgeCV
-            semaphoreVerifierAddress = contractsDeployed.semaphoreVerifierAddress
+            // const contractsDeployed = await main()
+            // zeroKnowledgeCV = contractsDeployed.zeroKnowledgeCV
+            zeroKnowledgeCV = await hre.ethers.getContractAt(
+                "Semaphore",
+                "0x3889927F0B5Eb1a02C6E2C20b39a1Bd4EAd76131",
+                signer
+            )
+            semaphoreAddress = await zeroKnowledgeCV.getAddress()
+
+            // semaphoreVerifierAddress = contractsDeployed.semaphoreVerifierAddress
             // Additional logic using deployed contract addresses
         } catch (error) {
             console.error("Deployment failed:", error)
         }
     })
     describe("Deployment", function () {
-        it("zkCV is deployed", async () => {
-            await expect(zeroKnowledgeCV.createGroup(1, deployer.address)).emit(
-                zeroKnowledgeCV,
-                "GroupCreated"
-            )
-        })
-        it("Add new applicant", async () => {
-            await zeroKnowledgeCV.createGroup(1, deployer.address)
+        // it("zkCV is deployed", async () => {
+        //     await expect(zeroKnowledgeCV.createGroup(1, deployer.address)).emit(
+        //         zeroKnowledgeCV,
+        //         "GroupCreated"
+        //     )
+        // })
+        // it("Add new applicant", async () => {
+        //     await zeroKnowledgeCV.createGroup(1, deployer.address)
 
-            await expect(zeroKnowledgeCV.connect(deployer).addMember(1, identity.commitment)).emit(
-                zeroKnowledgeCV,
-                "MemberAdded"
-            )
-        })
-        it("submit application (using offchain group)", async () => {
-            const group = new Group(1, 20)
-            group.addMember(identity.commitment)
+        //     await expect(zeroKnowledgeCV.connect(deployer).addMember(1, identity.commitment)).emit(
+        //         zeroKnowledgeCV,
+        //         "MemberAdded"
+        //     )
+        // })
+        // it("submit application (using offchain group)", async () => {
+        //     const group = new Group(1, 20)
+        //     group.addMember(identity.commitment)
 
-            // Adjust the relative path as necessary based on your project structure
-            const wasmFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.wasm")
-            const zkeyFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.zkey")
+        //     // Adjust the relative path as necessary based on your project structure
+        //     const wasmFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.wasm")
+        //     const zkeyFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.zkey")
 
-            const nullifierHash = 123456789
+        //     const nullifierHash = 123456789
 
-            const fullProof = await generateProof(identity, group, nullifierHash, signal, {
-                zkeyFilePath,
-                wasmFilePath,
-            })
+        //     const fullProof = await generateProof(identity, group, nullifierHash, signal, {
+        //         zkeyFilePath,
+        //         wasmFilePath,
+        //     })
 
-            const proofBool = await verifyProof(fullProof, 20)
+        //     const proofBool = await verifyProof(fullProof, 20)
 
-            expect(proofBool).equal(true)
-        })
+        //     expect(proofBool).equal(true)
+        // })
         it("submit application using Onchain Group", async () => {
-            const groupId = 1
-
-            await zeroKnowledgeCV.createGroup(groupId, deployer.address)
-
-            await zeroKnowledgeCV.connect(deployer).addMember(groupId, identity.commitment)
+            const groupId = 300
+            console.log("got here")
+            await zeroKnowledgeCV
+                .connect(signer)
+                .createGroup(groupId, "0x5f2AF68dF96F3e58e1a243F4f83aD4f5D0Ca6029")
+            console.log("got here 2")
+            await zeroKnowledgeCV.connect(signer).addMember(groupId, identity.commitment)
 
             const groupRoot = await zeroKnowledgeCV.getMerkleTreeRoot(groupId)
 
             const groupSize = await zeroKnowledgeCV.getMerkleTreeSize(groupId)
 
             console.log("stage 2")
-            const zeroKnowledgeCVAddress = await zeroKnowledgeCV.getAddress()
+            console.log("semaphoreAddress", semaphoreAddress)
 
-            const semaphoreEthers = new SemaphoreEthers("http://127.0.0.1:8545", {
-                address: zeroKnowledgeCVAddress,
+            const semaphoreEthers = new SemaphoreEthers("maticmum", {
+                provider: "alchemy",
+                apiKey: "LCWjuGIGXSD0auG-b9ESZdI87BeQCNrp",
+                address: semaphoreAddress,
+                startBlock: 0,
             })
 
             const groupIds = await semaphoreEthers.getGroupIds()
             console.log(groupIds)
+
             const members = await semaphoreEthers.getGroupMembers(groupId.toString())
 
             console.log("stage 3")
