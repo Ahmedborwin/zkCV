@@ -30,115 +30,93 @@ describe("zkCV", function () {
         deployer = accounts[0]
         employer = accounts[1]
 
-        rpcUrl = process.env.POLYGON_MUMBAI_RPC_URL
-        const provider = new hre.ethers.JsonRpcProvider(rpcUrl)
-        const privateKey = process.env.PRIVATE_KEY
-        const wallet = new hre.ethers.Wallet(privateKey)
-        signer = wallet.connect(provider)
-
         try {
-            // const contractsDeployed = await main()
-            // zeroKnowledgeCV = contractsDeployed.zeroKnowledgeCV
-            zeroKnowledgeCV = await hre.ethers.getContractAt(
-                "Semaphore",
-                "0x3889927F0B5Eb1a02C6E2C20b39a1Bd4EAd76131",
-                signer
-            )
-            semaphoreAddress = await zeroKnowledgeCV.getAddress()
-
-            // semaphoreVerifierAddress = contractsDeployed.semaphoreVerifierAddress
-            // Additional logic using deployed contract addresses
+            const contractsDeployed = await main()
+            zeroKnowledgeCV = contractsDeployed.zeroKnowledgeCV
+            sempahoreContract = contractsDeployed.semaphore
+            zeroKnowledgeCVAddress = zeroKnowledgeCV.address
         } catch (error) {
             console.error("Deployment failed:", error)
         }
     })
     describe("Deployment", function () {
-        // it("zkCV is deployed", async () => {
-        //     await expect(zeroKnowledgeCV.createGroup(1, deployer.address)).emit(
-        //         zeroKnowledgeCV,
-        //         "GroupCreated"
-        //     )
-        // })
-        // it("Add new applicant", async () => {
-        //     await zeroKnowledgeCV.createGroup(1, deployer.address)
-
-        //     await expect(zeroKnowledgeCV.connect(deployer).addMember(1, identity.commitment)).emit(
-        //         zeroKnowledgeCV,
-        //         "MemberAdded"
-        //     )
-        // })
+        it("zkCV is deployed", async () => {
+            await expect(zeroKnowledgeCV.createGroup(1)).emit(sempahoreContract, "GroupCreated")
+        })
+        it("Add new applicant", async () => {
+            await zeroKnowledgeCV.createGroup(1)
+            await expect(zeroKnowledgeCV.connect(deployer).joinGroup(1, identity.commitment)).emit(
+                sempahoreContract,
+                "MemberAdded"
+            )
+        })
         // it("submit application (using offchain group)", async () => {
         //     const group = new Group(1, 20)
         //     group.addMember(identity.commitment)
-
         //     // Adjust the relative path as necessary based on your project structure
         //     const wasmFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.wasm")
         //     const zkeyFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.zkey")
-
         //     const nullifierHash = 123456789
-
         //     const fullProof = await generateProof(identity, group, nullifierHash, signal, {
         //         zkeyFilePath,
         //         wasmFilePath,
         //     })
-
         //     const proofBool = await verifyProof(fullProof, 20)
-
         //     expect(proofBool).equal(true)
         // })
         it("submit application using Onchain Group", async () => {
             const groupId = 300
+            await expect(zeroKnowledgeCV.connect(deployer).createGroup(groupId)).emit(
+                sempahoreContract,
+                "GroupCreated"
+            )
+
             console.log("got here")
-            await zeroKnowledgeCV
-                .connect(signer)
-                .createGroup(groupId, "0x5f2AF68dF96F3e58e1a243F4f83aD4f5D0Ca6029")
+
+            await zeroKnowledgeCV.joinGroup(groupId, identity.commitment)
+
             console.log("got here 2")
-            await zeroKnowledgeCV.connect(signer).addMember(groupId, identity.commitment)
-
-            const groupRoot = await zeroKnowledgeCV.getMerkleTreeRoot(groupId)
-
-            const groupSize = await zeroKnowledgeCV.getMerkleTreeSize(groupId)
-
-            console.log("stage 2")
-            console.log("semaphoreAddress", semaphoreAddress)
-
-            const semaphoreEthers = new SemaphoreEthers("maticmum", {
-                provider: "alchemy",
-                apiKey: "LCWjuGIGXSD0auG-b9ESZdI87BeQCNrp",
-                address: semaphoreAddress,
+            const semaphoreEthers = new SemaphoreEthers("http://127.0.0.1:8545", {
+                address: sempahoreContract.address,
                 startBlock: 0,
             })
-
             const groupIds = await semaphoreEthers.getGroupIds()
-            console.log(groupIds)
+
+            const groupChain = await semaphoreEthers.getGroup(groupId.toString())
 
             const members = await semaphoreEthers.getGroupMembers(groupId.toString())
 
-            console.log("stage 3")
-
-            const group = new Group(groupId, groupSize, members)
-
-            console.log("identity", identity)
-            console.log("group", group)
-            console.log("groupRoot", groupRoot)
-            console.log("signal", signal)
+            const group = new Group(groupId, 20, members)
 
             const nullifierHash = 123456789
+
+            const groupRoot = groupChain.merkleTree.root
 
             // Adjust the relative path as necessary based on your project structure
             const wasmFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.wasm")
             const zkeyFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.zkey")
 
+            console.log("HERE")
+
             const fullProof = await generateProof(identity, group, nullifierHash, signal, {
                 zkeyFilePath,
                 wasmFilePath,
             })
-            console.log("stage 4")
 
             //call submit application
             await expect(
-                zeroKnowledgeCV.submitApplication(signal, groupRoot, groupId, fullProof.proof)
-            ).emit(zeroKnowledgeCV, "ApplicationSubmitted")
+                zeroKnowledgeCV.submitCV(
+                    groupId,
+                    signal,
+                    groupRoot,
+                    fullProof.nullifierHash,
+                    fullProof.proof,
+                    fullProof.externalNullifier
+                )
+            ).emit(zeroKnowledgeCV, "CVSubmitted")
+
+            const verifiedProofs = await semaphoreEthers.getGroupVerifiedProofs(groupId.toString())
+            console.log(verifiedProofs)
         })
     })
 })

@@ -10,21 +10,18 @@ async function main() {
     const sempahoreContracts = await run("deploy:semaphore", {
         logs: true,
     })
+
     semaphore = sempahoreContracts.semaphore
     semaphoreVerifierAddress = sempahoreContracts.semaphoreVerifierAddress
     poseidonAddress = sempahoreContracts.poseidonAddress
 
     // Link the library
-    const zkFactory = await ethers.getContractFactory("ZeroKnowledgeCV", {
-        libraries: {
-            PoseidonT3: poseidonAddress,
-        },
-    })
+    const zkFactory = await ethers.getContractFactory("ZeroKnowledgeCV")
 
     // Deploy the contract with the library linked
-    const zeroKnowledgeCV = await zkFactory.deploy(semaphoreVerifierAddress)
-    await zeroKnowledgeCV.waitForDeployment()
-    console.log(`ZeroKnowledgeCV deployed to: ${await zeroKnowledgeCV.getAddress()}`)
+    const zeroKnowledgeCV = await zkFactory.deploy(semaphore.address)
+    await zeroKnowledgeCV.deployed()
+    console.log(`ZeroKnowledgeCV deployed to: ${zeroKnowledgeCV.address}`)
     return { semaphore, zeroKnowledgeCV, semaphoreVerifierAddress }
 }
 
