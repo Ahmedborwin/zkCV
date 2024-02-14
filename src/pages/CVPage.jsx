@@ -8,17 +8,18 @@ import FormField from '../components/common/Form/FormField';
 
 // Utils
 import { UI_AVATARS } from '../utils/constants';
+import FormFile from '../components/common/Form/FormFile';
 
 const CVPage = () => {
-    const [editMode, setEditMode] = useState(false);
     const [name, setName] = useState("John Doe");
-    const [position, setPosition] = useState("Software Developer");
-    const [skills, setSkills] = useState(["React", "Solidity", "JavaScript"]);
     const [avatarUrl, setAvatarUrl] = useState("");
+    const [file, setFile] = useState(null);
+
+    console.log(file, "@@@@file")
 
     useEffect(() => {
-        setAvatarUrl(`${UI_AVATARS}/?name=${encodeURIComponent(name)}&color=7F9CF5&background=EBF4FF`);
-    }, [name]);
+        setAvatarUrl(`${UI_AVATARS}/?name=?&color=7F9CF5&background=EBF4FF`);
+    }, []);
 
     return (
         <FadeIn>
@@ -30,30 +31,13 @@ const CVPage = () => {
                         Identity
                     </FormField>
 
-                    <FormField value={position} onChange={(e) => setPosition(e.target.value)}>
-                        Position
-                    </FormField>
+                    <FormFile onChange={(e) => setFile(e.target.files[0])}>
+                        Upload File
+                    </FormFile>
 
-                    <div className="w-full">
-                        <label className="block mb-2 text-sm font-bold text-white">Skills</label>
-                        <div className="flex flex-wrap gap-2">
-                            {skills.map((skill, index) => (
-                                <span key={index} className="px-3 py-1 rounded-full text-sm font-medium bg-[#ffffff40] text-white shadow">
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-
-                    {!editMode &&
-                        <SubmitButton onClick={() => setEditMode(true)}>
-                            EDIT
-                        </SubmitButton>}
-
-                    {editMode &&
-                        <SubmitButton onClick={() => setEditMode(false)}>
-                            SAVE
-                        </SubmitButton>}
+                    <SubmitButton onClick={() => {}}>
+                        SUBMIT CHANGES
+                    </SubmitButton>
                 </div>
             </BentoGrid>
         </FadeIn>

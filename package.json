@@ -38,6 +38,7 @@
         "@particle-network/auth": "^1.2.1",
         "@particle-network/rainbowkit-ext": "^1.2.0",
         "@rainbow-me/rainbowkit": "^1.0.11",
+        "@semaphore-protocol/data": "^4.0.0-alpha.7",
         "framer-motion": "^11.0.3",
         "hardhat": "^2.19.5",
         "prop-types": "^15.8.1",

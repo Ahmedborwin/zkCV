@@ -1,5 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+
+import SubmitButton from "../components/common/Button/SubmitButton";
+
+// Hooks
+import useRole from "../hooks/useRole";
+
+// Utils
+import { isEmployer } from "../utils/helpers/roles";
 
 // Define keyframes for animations
 const glow = keyframes`
@@ -70,28 +78,55 @@ const RoadmapStage = ({ isCurrent, isPrevious, children }) => {
     }
 };
 
-const Roadmap = ({ stages, currentStage }) => {
+const Roadmap = () => {
+    const [currentStage, setCurrentStage] = useState(1);
+    const stages = ["Screening", "First Interview", "Technical Interview", "Discuss Offer", "Final Decision"];
+  
+    const handlePreviousStage = () => setCurrentStage(prevStage => Math.max(0, prevStage - 1));
+    const handleNextStage = () => setCurrentStage(prevStage => Math.min(stages.length - 1, prevStage + 1));
+    const role = useRole();
+
     return (
-        <div className="mx-8">
-            <h3 className="text-center text-xl font-bold mb-8">
-                Recruitment Progress
-            </h3>
+        <>
+            <div className="mx-8">
+                <h3 className="text-center text-xl font-bold mb-8">
+                    Recruitment Progress
+                </h3>
 
-            <RoadmapContainer>
-                {stages.map((stage, index) => (
-                    <div key={index} className="flex flex-col items-center mx-4">
-                        <RoadmapStage
-                            isCurrent={index === currentStage}
-                            isPrevious={index < currentStage}
-                        >
-                            {index + 1}
-                        </RoadmapStage>
+                <RoadmapContainer>
+                    {stages.map((stage, index) => (
+                        <div key={index} className="flex flex-col items-center mx-4">
+                            <RoadmapStage
+                                isCurrent={index === currentStage}
+                                isPrevious={index < currentStage}
+                            >
+                                {index + 1}
+                            </RoadmapStage>
 
-                        <div className="mt-2 text-sm">{stage}</div>
-                    </div>
-                ))}
-            </RoadmapContainer>
-        </div>
+                            <div className="mt-2 text-sm">{stage}</div>
+                        </div>
+                    ))}
+                </RoadmapContainer>
+            </div>
+
+            {isEmployer(role) &&
+                <div className="flex items-center justify-center space-x-4 mt-4">
+                    <SubmitButton
+                        onClick={handlePreviousStage}
+                        disabled={currentStage === 0}
+                    >
+                        PREVIOUS
+                    </SubmitButton>
+
+                    <SubmitButton
+                        onClick={handleNextStage}
+                        disabled={currentStage === stages.length - 1}
+                    >
+                        NEXT
+                    </SubmitButton>
+                </div>
+            }
+        </>
     );
 };
 
