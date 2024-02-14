@@ -8,6 +8,7 @@ import {
 
 import useWalletConnected from "../hooks/useAccount"
 import useEasSdk from "../hooks/useEAS"
+import SubmitButton from "./common/Button/SubmitButton"
 
 const TestAttestation = () => {
     const { accountDetails } = useWalletConnected()
@@ -172,24 +173,24 @@ const TestAttestation = () => {
         <>
             <div>TestAttestation</div>
             <p>What do we need to test here?</p>
-            <button className="text-lg p-5" onClick={() => handleSubmitSchema()}>
+            <SubmitButton onClick={() => handleSubmitSchema()}>
                 Submit Schema
-            </button>
-            <button className="text-lg p-5" onClick={() => handleAttestation()}>
+            </SubmitButton>
+            <SubmitButton onClick={() => handleAttestation()}>
                 Make Attestation
-            </button>
-            <button className="text-lg p-5" onClick={() => handleGetAttestation()}>
+            </SubmitButton>
+            <SubmitButton onClick={() => handleGetAttestation()}>
                 Get Attestation
-            </button>
-            <button className="text-lg p-5" onClick={() => handleOffChainAttestation()}>
+            </SubmitButton>
+            <SubmitButton onClick={() => handleOffChainAttestation()}>
                 Make offChain Attestation
-            </button>
-            <button className="text-lg p-5" onClick={() => verifyOffChainAttestation()}>
+            </SubmitButton>
+            <SubmitButton onClick={() => verifyOffChainAttestation()}>
                 Verify offChain Attestation
-            </button>
-            <button className="text-lg p-5" onClick={() => handleGetSchema()}>
+            </SubmitButton>
+            <SubmitButton onClick={() => handleGetSchema()}>
                 Handle Get Schema
-            </button>
+            </SubmitButton>
         </>
     )
 }
