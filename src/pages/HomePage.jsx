@@ -7,6 +7,8 @@ import BentoGrid from "../components/common/Effects/BentoGrid";
 import FadeIn from "../components/common/Effects/FadeIn";
 import CreateIdentity from "../components/Identity";
 import JoinGroups from "../components/JoinGroups";
+import Schema from "../components/Schema";
+import Attestation from "../components/Attestation";
 
 const HomePage = () => {
   return (
@@ -25,6 +27,14 @@ const HomePage = () => {
 
       <BentoGrid>
         <TestAttestation />
+      </BentoGrid>
+
+      <BentoGrid>
+        <Schema />
+      </BentoGrid>
+
+      <BentoGrid>
+        <Attestation />
       </BentoGrid>
     </FadeIn>
   );

@@ -22,9 +22,6 @@ const CreateJobAdd = (jobAddCount = 0) => {
     const address = accountDetails.address;
 
     const handlePostJobAdd = () => {
-        // create identity 
-        const identity = new Identity(`${address}/${position}`);
-
         // create group
         const newId = ethers.toBigInt(`1`);
         const newJobAdd = new Group(newId, 20);

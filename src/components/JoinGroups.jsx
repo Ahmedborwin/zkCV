@@ -1,71 +1,24 @@
 import React, { useState, useCallback, useEffect } from "react";
-import useSemaphore from "../hooks/useSemaphore";
-import SubmitButton from "./common/Button/SubmitButton";
 
+// Components
+import SubmitButton from "./common/Button/SubmitButton";
+import SemaphoreContainer from "./common/Container/Semaphore/SemaphoreContainer";
+
+// Semaphore
 import { Identity } from "@semaphore-protocol/identity";
 
-const JoinGroups = () => {
-    const { users, refreshUsers, addUser } = useSemaphore();
+// Hooks
+import useSemaphore from "../hooks/useSemaphore";
+import useGroupJoin from "../hooks/useGroupJoin";
 
-    const [identity, setIdentity] = useState();
-    const [messages, setMessages] = useState("");
-    const [loading, setLoading] = useState(false);
+const JoinGroups = () => {
+    const { users, refreshUsers } = useSemaphore();
 
     const userHasJoined = useCallback((identity) => {
         return users.includes(identity.commitment.toString());
     }, [users])
 
-    const joinGroup = useCallback(async () => {
-        if (!identity) {
-            return
-        }
-
-        setLoading(true)
-        setLogs(`Joining the Feedback group...`)
-
-        let response;
-
-        if (env.OPENZEPPELIN_AUTOTASK_WEBHOOK) {
-            response = await fetch(env.OPENZEPPELIN_AUTOTASK_WEBHOOK, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    abi: Feedback.abi,
-                    address: env.FEEDBACK_CONTRACT_ADDRESS,
-                    functionName: "joinGroup",
-                    functionParameters: [identity.commitment.toString()]
-                })
-            })
-        } else {
-            response = await fetch("api/join", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    identityCommitment: identity.commitment.toString()
-                })
-            })
-        }
-
-        if (response.status === 200) {
-            addUser(identity.commitment.toString())
-
-            setLogs(`You joined the Feedback group event 🎉 Share your feedback anonymously!`)
-        } else {
-            setLogs("Some error occurred, please try again!")
-        }
-
-        setLoading(false);
-    }, [identity])
-
-    useEffect(() => {
-        const identityString = localStorage.getItem("identity");
-
-        if (!identityString) {
-            return
-        }
-
-        setIdentity(new Identity(identityString));
-    }, [])
+    const { identity, messages, loading, joinGroup, setMessages } = useGroupJoin();
 
     useEffect(() => {
         if (users.length > 0) {
@@ -74,18 +27,23 @@ const JoinGroups = () => {
     }, [users])
 
     return (
-        <div className="mx-8">
-            <h3 className="text-center text-xl font-bold mb-8">Groups</h3>
+        <SemaphoreContainer
+            title={"Groups"}
+            subTitle={`Feedback users (${users.length})`}
+            messages={messages}
+        >
+            <div className="flex justify-center m-4">
+                <div className="mx-4">
+                    <SubmitButton onClick={refreshUsers}>
+                        Refresh
+                    </SubmitButton>
+                </div>
 
-            <h5>Feedback users ({users.length})</h5>
-            <SubmitButton onClick={refreshUsers}>
-                Refresh
-            </SubmitButton>
-
-            <div>
-                <SubmitButton onClick={joinGroup} disabled={loading || !identity || userHasJoined(identity)}>
-                    Join Group
-                </SubmitButton>
+                <div className="mx-4">
+                    <SubmitButton onClick={joinGroup} disabled={loading || !identity || userHasJoined(identity)}>
+                        Join Group
+                    </SubmitButton>
+                </div>
             </div>
 
             {users.length > 0 && (
@@ -97,7 +55,7 @@ const JoinGroups = () => {
                     ))}
                 </div>
             )}
-        </div>
+        </SemaphoreContainer>
     )
 }
 

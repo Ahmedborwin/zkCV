@@ -12,10 +12,10 @@ const useSemaphore = () => {
 
     const refreshUsers = useCallback(async () => {
         const semaphore = new SemaphoreEthers(ethereumNetwork, {
-            address: env.SEMAPHORE_CONTRACT_ADDRESS
+            address: process.env.SEMAPHORE_CONTRACT_ADDRESS
         })
 
-        const members = await semaphore.getGroupMembers(env.GROUP_ID)
+        const members = await semaphore.getGroupMembers(process.env.GROUP_ID)
 
         setUsers(members)
     }, [])
@@ -29,10 +29,10 @@ const useSemaphore = () => {
 
     const refreshFeedback = useCallback(async () => {
         const semaphore = new SemaphoreEthers(ethereumNetwork, {
-            address: env.SEMAPHORE_CONTRACT_ADDRESS
+            address: process.env.SEMAPHORE_CONTRACT_ADDRESS
         })
 
-        const proofs = await semaphore.getGroupVerifiedProofs(env.GROUP_ID)
+        const proofs = await semaphore.getGroupVerifiedProofs(process.env.GROUP_ID)
 
         setFeedback(proofs.map(({ signal }) => ethers.decodeBytes32String(ethers.toBigInt(signal))))
     }, [])

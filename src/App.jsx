@@ -3,7 +3,7 @@ import PageRoutes from './routes';
 
 // Components
 import FadeIn from './components/common/Effects/FadeIn';
-import Container from './components/common/Container';
+import Container from './components/common/Container/Basic';
 
 const App = () => {
   return (
