@@ -1,12 +1,4 @@
-import {
-    mainnet,
-    polygon,
-    hardhat,
-    sepolia,
-    scrollSepolia,
-    scrollTestnet,
-    polygonMumbai,
-} from "wagmi/chains"
+import { mainnet, polygon, hardhat, sepolia, scrollSepolia, scrollTestnet, polygonMumbai } from "wagmi/chains"
 import { configureChains, createConfig } from "wagmi"
 import { publicProvider } from "wagmi/providers/public"
 import { getParticleNetwork, getPopularWallets } from "../../../particle.config"
@@ -17,15 +9,7 @@ const createConnectors = (wallets) => {
 }
 
 export const configureApp = () => {
-    const chainsConfig = [
-        mainnet,
-        polygonMumbai,
-        polygon,
-        hardhat,
-        sepolia,
-        scrollSepolia,
-        scrollTestnet,
-    ]
+    const chainsConfig = [mainnet, polygon, polygonMumbai, hardhat, sepolia, scrollSepolia, scrollTestnet]
     const { chains, publicClient, webSocketPublicClient } = configureChains(chainsConfig, [
         publicProvider(),
     ])

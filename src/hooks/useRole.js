@@ -5,7 +5,7 @@ const roles = {
     deployer: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
     employer: [
         "0x0a192a377E7F2Bd2ffe494cE0976b79D897E10B0",
-        "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
+        "0xe437260B3785171cB5BAd86c3B78d961da1b8223",
     ],
     employee: [],
 }

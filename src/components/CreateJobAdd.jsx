@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react"
-import { ethers } from "ethers"
+import React, { useEffect, useState } from "react";
 
 // Semaphore
 import useIdentity from "../hooks/useIdentity"
@@ -10,74 +9,49 @@ import SubmitButton from "./common/Button/SubmitButton"
 import FormField from "./common/Form/FormField"
 import FormBox from "./common/Form/FormBox"
 
-//Contracts
+// Contracts
 import zkCV_ABI from "../config/zkCV_ABI.json"
 import zkCV_AddressList from "../config/zkCV_address.json"
-import Sempahore_AddressList from "../config/semaphore_address.json"
-import Semaphore_ABI from "../config/semaphore_ABI.json"
 
-//hooks
-import useAccount from "../hooks/useAccount"
-import { useContractWrite, usePrepareContractWrite, useContractRead } from "wagmi"
+// Hooks
+import useAccount from "../hooks/useAccount";
+
+// Redux
+import { useDispatch } from 'react-redux';
+
+// Store
+import { createGroup } from "../store/interactions";
 
 const CreateJobAdd = (jobAddCount = 0) => {
+    const dispatch = useDispatch();
+
     const [editMode, setEditMode] = useState(false)
     const [position, setPosition] = useState(null)
     const [experience, setExperience] = useState(null)
-    const [skills, setSkills] = useState(null)
+
     const [createGroupReady, setCreateGroupReady] = useState(false)
     const [prepareCreateGroupReady, setPrepareCreateGroupReady] = useState(false)
+    const { identity } = useIdentity();
 
-    const { accountDetails, chain } = useAccount()
-    const { identity } = useIdentity()
-
-    const address = accountDetails.address
-
-    //write to Token contract and NFT contract
-    const { config: prepareCreateGroup } = usePrepareContractWrite({
-        address: zkCV_AddressList[chain.id],
-        abi: zkCV_ABI,
-        functionName: "createGroup",
-        args: [1],
-        enabled: prepareCreateGroupReady,
-        onSettled(data, error) {
-            if (data) {
-                console.log("prepareGroupCreate", data)
-                setCreateGroupReady(true)
-                setPrepareCreateGroupReady(false)
-            } else if (error) {
-                console.log("prepareGroupCreate", error)
-                setPrepareCreateGroupReady(false)
-            }
-        },
-    })
-    // approve
-    const { writeAsync: createGroup } = useContractWrite(prepareCreateGroup)
 
     const handlePostJobAdd = async () => {
-        // // create group
-        // const newId = ethers.toBigInt(`1`)
-        // const newJobAdd = new Group(newId, 20)
-        // newJobAdd.addMember(identity.commitment)
-        // // save group
-        // console.log(newJobAdd, "@@@@newJobAdd")
-        // // post job add
+        // Create Group
+        await createGroup(
+            provider,
+            zkCV,
+            dispatch
+        );
 
-        // setPrepareCreateGroupReady(true)
-        setEditMode(false)
-        const provider = new ethers.AlchemyProvider("matic-mumbai", process.env.ALCHEMY_API_KEY)
-        const privateKey = process.env.REACT_APP_PRIVATE_KEY // fetch PRIVATE_KEY
-        console.log(privateKey)
-        const wallet = new ethers.Wallet(
-            "0xbf0c60264942544c1ecb566e558207f5d84d08bd66d524bbc7df9b92b9d6f946"
+        const currentGroupId = groupId + 1;
+
+        // Join Group
+        await JoinGroups(
+            provider,
+            zkCV,
+            identity,
+            currentGroupId,
+            dispatch
         )
-        const signer = wallet.connect(provider)
-        const zeroKnowledgeCV = new ethers.BaseContract(
-            zkCV_AddressList[chain.id],
-            zkCV_ABI,
-            signer
-        )
-        const tx = await zeroKnowledgeCV.createGroup(1)
     }
 
     useEffect(() => {

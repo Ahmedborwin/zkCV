@@ -13,6 +13,12 @@ import { configureApp } from "./utils/helpers/configureApp"
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit"
 import { WagmiConfig } from "wagmi"
 
+// Redux 
+import { Provider } from 'react-redux';
+
+// Store
+import { store } from "./store/store";
+
 const { chains, wagmiClient } = configureApp()
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -26,7 +32,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 })}
                 chains={chains}
             >
-                <App />
+                <Provider store={store}>
+                    <App />
+                </Provider>
             </RainbowKitProvider>
         </WagmiConfig>
     </React.StrictMode>
