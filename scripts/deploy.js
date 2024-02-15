@@ -1,5 +1,6 @@
 const hre = require("hardhat")
 const { run, ethers } = hre
+const updateContractInfo = require("../scripts/updateABI&Address")
 
 async function main() {
     let semaphore, semaphoreVerifierAddress, poseidonAddress
@@ -22,13 +23,16 @@ async function main() {
     const zeroKnowledgeCV = await zkFactory.deploy(semaphore.address)
     await zeroKnowledgeCV.deployed()
     console.log(`ZeroKnowledgeCV deployed to: ${zeroKnowledgeCV.address}`)
+    //record new contract address and ABI
+    await updateContractInfo(semaphore.address, zeroKnowledgeCV.address)
+
     return { semaphore, zeroKnowledgeCV, semaphoreVerifierAddress }
 }
 
-module.exports = { main }
-// main()
-//     .then(() => process.exit(0))
-//     .catch((error) => {
-//         console.error(error)
-//         process.exit(1)
-//     })
+// module.exports = { main }
+main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.error(error)
+        process.exit(1)
+    })
