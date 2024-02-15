@@ -12,7 +12,17 @@ import "./interfaces/ISemaphore.sol";
 /// can be validated.
 contract ZeroKnowledgeCV {
     ISemaphore public semaphore;
+
     uint256 public groupId;
+
+    struct ApplicationDetails {
+        uint8 yearsExperience;
+        string postitionTitle;
+    }
+
+    mapping(uint256 => ApplicationDetails) public applicationMapping;
+    mapping(uint256 => bool) public vacancyIsLive;
+    mapping(uint256 => uint256[]) public chosenCVHashes;
 
     event CVSubmitted(uint256 cvHash);
 
@@ -21,8 +31,9 @@ contract ZeroKnowledgeCV {
         groupId = 1;
     }
 
-    function createGroup() external {
+    function createGroup(uint8 _experience, string calldata _title) external {
         semaphore.createGroup(groupId, 20, address(this));
+        applicationMapping[groupId] = ApplicationDetails(_experience, _title);
         groupId++;
     }
 
