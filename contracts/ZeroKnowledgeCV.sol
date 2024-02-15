@@ -23,6 +23,7 @@ contract ZeroKnowledgeCV {
     mapping(uint256 => ApplicationDetails) public applicationMapping;
     mapping(uint256 => bool) public vacancyIsLive;
     mapping(uint256 => uint256[]) public chosenCVHashes;
+    mapping(string => uint256) public semaphoreIdToCVHash;
 
     event CVSubmitted(uint256 cvHash);
 
@@ -34,6 +35,7 @@ contract ZeroKnowledgeCV {
     function createGroup(uint8 _experience, string calldata _title) external {
         semaphore.createGroup(groupId, 20, address(this));
         applicationMapping[groupId] = ApplicationDetails(_experience, _title);
+        vacancyIsLive[groupId] = true;
         groupId++;
     }
 
@@ -59,5 +61,10 @@ contract ZeroKnowledgeCV {
         );
 
         emit CVSubmitted(cvHash);
+    }
+
+    function setChosenCVHash(uint256 _groupId, uint256[] calldata cvHashList) external {
+        chosenCVHashes[_groupId] = cvHashList;
+        vacancyIsLive[_groupId] = false;
     }
 }

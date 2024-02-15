@@ -1,0 +1,50 @@
+import React, { useState } from "react"
+import axios from "axios"
+
+const PinataUploader = ({ file }) => {
+    const [uploadStatus, setUploadStatus] = useState("")
+
+    const uploadToPinata = async () => {
+        if (!file) {
+            console.error("No file to upload")
+            return
+        }
+
+        const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`
+        let data = new FormData()
+        data.append("file", file)
+
+        try {
+            setUploadStatus("Uploading...")
+            // You should replace `pinata_api_key` and `pinata_secret_api_key` with your actual Pinata API keys
+            const response = await axios.post(url, data, {
+                headers: {
+                    "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+                    pinata_api_key: "66aa6f4bc6281869ae1e",
+                    pinata_secret_api_key:
+                        "f5d436e5cc4ca6e4fc2e56ad9288fa2250c70706289e275abd7e1660c7ddc4ac",
+                },
+            })
+
+            if (response.status === 200) {
+                console.log("File uploaded to IPFS:", response.data)
+                setUploadStatus("Upload successful!")
+            } else {
+                console.error("Failed to upload file:", response)
+                setUploadStatus("Upload failed.")
+            }
+        } catch (error) {
+            console.error("Error uploading file:", error)
+            setUploadStatus("Upload failed.")
+        }
+    }
+
+    return (
+        <div>
+            <button onClick={uploadToPinata}>Upload to Pinata</button>
+            <p>{uploadStatus}</p>
+        </div>
+    )
+}
+
+export default PinataUploader

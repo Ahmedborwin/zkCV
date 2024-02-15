@@ -1,53 +1,44 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 
 // Semaphore
-import useIdentity from "../hooks/useIdentity";
+import useIdentity from "../hooks/useIdentity"
 
 // Components
-import SubmitButton from "./common/Button/SubmitButton";
-import FormField from "./common/Form/FormField";
-import FormBox from "./common/Form/FormBox";
+import SubmitButton from "./common/Button/SubmitButton"
+import FormField from "./common/Form/FormField"
+import FormBox from "./common/Form/FormBox"
 
 // Redux
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux"
+
+//ethers
+import { ethers } from "ethers"
 
 // Store
-import { createGroup, joinGroup } from "../store/interactions";
-import { selectProvider, selectGroupId, selectZKCV } from "../store/selectors";
+import { createGroup, joinGroup } from "../store/interactions"
+import { selectProvider, selectGroupId, selectZKCV } from "../store/selectors"
 
 const CreateJobAdd = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
 
-    const provider = useSelector(selectProvider);
-    const zkCV = useSelector(selectZKCV);
-    const groupId = useSelector(selectGroupId);
+    const provider = useSelector(selectProvider)
+    const zkCV = useSelector(selectZKCV)
+    const groupId = useSelector(selectGroupId)
 
-    const [editMode, setEditMode] = useState(false);
-    const [position, setPosition] = useState(null);
-    const [experience, setExperience] = useState(null);
+    const [editMode, setEditMode] = useState(false)
+    const [position, setPosition] = useState(null)
+    const [experience, setExperience] = useState(null)
 
-    const { identity } = useIdentity();
+    const { identity } = useIdentity()
 
     const handlePostJobAdd = async () => {
         // Create Group
-        await createGroup(
-            provider,
-            zkCV,
-            experience,
-            position,
-            dispatch
-        );
+        await createGroup(provider, zkCV, ethers.toBigInt(experience), position, dispatch)
 
-        const currentGroupId = groupId + 1;
+        const currentGroupId = groupId + 1
 
         // Join Group
-        await joinGroup(
-            provider, 
-            zkCV,
-            identity.commitment,
-            currentGroupId,
-            dispatch,
-        );
+        await joinGroup(provider, zkCV, identity.commitment, currentGroupId, dispatch)
     }
 
     return (
