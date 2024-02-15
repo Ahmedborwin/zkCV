@@ -25,40 +25,42 @@ const App = () => {
   const { isConnected } = useAccount();
 
   const loadBlockchainData = async () => {
-    // Initiate provider
     const provider = loadProvider(dispatch);
-
-    // Fetch current network's chainId (e.g. hardhat: 31337, kovan: 42)
     const chainId = await loadNetwork(provider, dispatch);
 
-    // Reload page when network changes
-    window.ethereum.on('chainChanged', () => {
-      window.location.reload();
-    })
-
-    // Fetch current account from Metamask when changed
-    window.ethereum.on('accountsChanged', async () => {
-      await loadAccount(dispatch);
-      
-      // clear localStorage identity
-      localStorage.removeItem("identity");
-
-      // reset router page
-    })
-
     if (chainId) {
-      // Initiate contracts
       await loadSemaphore(provider, chainId, dispatch);
       const zkCV = await loadZKCV(provider, chainId, dispatch);
 
-      // Load campaigns details
-      await loadGroups(zkCV, dispatch);
+      if (zkCV)
+        await loadGroups(zkCV, dispatch);
     }
-  }
+  };
 
   useEffect(() => {
+    if (!window.ethereum) return; // Ensure Ethereum is available
+
+    const handleChainChanged = () => {
+      console.log('Chain changed, reloading page.');
+      window.location.reload();
+    };
+
+    const handleAccountsChanged = async () => {
+      await loadAccount(dispatch);
+      localStorage.removeItem("identity");
+    };
+
+    window.ethereum.on('chainChanged', handleChainChanged);
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+    // Trigger initial load or state update
     isConnected && loadBlockchainData();
-  }, [isConnected])
+
+    return () => {
+      window.ethereum.removeListener('chainChanged', handleChainChanged);
+      window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+    };
+  }, [isConnected, dispatch]);
 
   return (
     <Container>

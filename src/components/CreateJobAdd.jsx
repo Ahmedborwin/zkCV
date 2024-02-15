@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 // Semaphore
 import useIdentity from "../hooks/useIdentity";
-import { Group } from "@semaphore-protocol/group"
 
 // Components
 import SubmitButton from "./common/Button/SubmitButton";
@@ -27,9 +26,6 @@ const CreateJobAdd = () => {
     const [position, setPosition] = useState(null);
     const [experience, setExperience] = useState(null);
 
-    const [createGroupReady, setCreateGroupReady] = useState(false);
-    const [prepareCreateGroupReady, setPrepareCreateGroupReady] = useState(false);
-
     const { identity } = useIdentity();
 
     const handlePostJobAdd = async () => {
@@ -37,6 +33,8 @@ const CreateJobAdd = () => {
         await createGroup(
             provider,
             zkCV,
+            experience,
+            position,
             dispatch
         );
 
@@ -46,7 +44,7 @@ const CreateJobAdd = () => {
         await joinGroup(
             provider, 
             zkCV,
-            identity,
+            identity.commitment,
             currentGroupId,
             dispatch,
         );

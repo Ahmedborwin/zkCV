@@ -5,6 +5,7 @@ export const zkCV = createSlice({
     initialState: {
         contract: null,
         groupId: 0,
+        groups: [],
         createGroup: {
             isLoading: false,
             isSuccess: false,
@@ -25,6 +26,9 @@ export const zkCV = createSlice({
         setGroupId: (state, action) => {
             state.groupId = action.payload;
         },
+        setGroups: (state, action) => {
+            state.groups = action.payload;
+        },
         createGroupIsLoading: (state) => {
             state.createGroup.isLoading = true;
             state.createGroup.isSuccess = false;
@@ -39,6 +43,9 @@ export const zkCV = createSlice({
 
             // increment groupId
             state.groupId = state.groupId + 1;
+
+            // append group to groups
+            state.groups.push([action.payload.group.experience, action.payload.group.title]);
         },
         createGroupRejected: (state) => {
             state.createGroup.isLoading = false;
@@ -73,6 +80,7 @@ export const zkCV = createSlice({
 export const {
     setContract,
     setGroupId,
+    setGroups,
     createGroupIsLoading,
     createGroupSuccess,
     createGroupRejected,

@@ -9,6 +9,7 @@ import {
 import {
     setContract as setZKCVContract,
     setGroupId,
+    setGroups,
     createGroupIsLoading,
     createGroupSuccess,
     createGroupRejected,
@@ -45,7 +46,7 @@ export const loadNetwork = async (provider, dispatch) => {
 
 export const loadAccount = async (dispatch) => {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = ethers.utils.getAddress(accounts[0]);
+    const account = ethers.getAddress(accounts[0]);
 
     dispatch(setAccount(account));
 
@@ -71,22 +72,31 @@ export const loadSemaphore = async (provider, chainId, dispatch) => {
 export const loadGroups = async (zkCV, dispatch) => {
     const groupId = parseInt(await zkCV.groupId());
     dispatch(setGroupId(groupId));
+
+    const groups = await zkCV.applicationMapping();
+    dispatch(setGroups(groups));
 }
 
 // ------------------------------------------------------------------------------
 // CREATE GROUP
-export const createGroup = async (provider, zkCV, dispatch) => {
+export const createGroup = async (provider, zkCV, experience, title, dispatch) => {
     try {
         dispatch(createGroupIsLoading());
 
         const signer = await provider.getSigner();
 
         const transaction = await zkCV.connect(signer)
-            .createGroup();
+            .createGroup(
+                experience,
+                title
+            );
 
         await transaction.wait();
 
-        dispatch(createGroupSuccess({ transactionHash: transaction.hash }));
+        dispatch(createGroupSuccess({
+            group: { title: title, experience: experience },
+            transactionHash: transaction.hash
+        }));
     } catch (error) {
         dispatch(createGroupRejected(error.message));
     }
