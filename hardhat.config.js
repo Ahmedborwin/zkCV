@@ -4,7 +4,7 @@ require("dotenv").config()
 
 const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF"
 // If not set, it uses the hardhat account 0 private key.
-const PRIVATE_KEY = process.env.PRIVATE_KEY || ""
+const PRIVATE_KEY = process.env.REACT_APP_PRIVATE_KEY || ""
 const POLYGON_SCAN_API_KEY = process.env.POLYGON_SCAN_API_KEY || ""
 /** @type import('hardhat/config').HardhatUserConfig */
 

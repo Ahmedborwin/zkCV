@@ -16,7 +16,7 @@ const useSchema = () => {
 
     const { accountDetails, chain } = useWalletConnected()
 
-    const SCHEMA_REGISTRY_CONTRACT_ADDRESS = SchemaRegistryList[chain.id]
+    const SCHEMA_REGISTRY_CONTRACT_ADDRESS = SchemaRegistryList[chain?.id]
 
     const fetchSchemaUID = async () => {
         try {

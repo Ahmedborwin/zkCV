@@ -12,16 +12,18 @@ import "./interfaces/ISemaphore.sol";
 /// can be validated.
 contract ZeroKnowledgeCV {
     ISemaphore public semaphore;
+    uint256 public groupId;
 
     event CVSubmitted(uint256 cvHash);
 
     constructor(address semaphoreAddress) {
         semaphore = ISemaphore(semaphoreAddress);
+        groupId = 1;
     }
 
-    function createGroup(uint256 _groupId) external {
-        //   groupId = _groupId;
-        semaphore.createGroup(_groupId, 20, address(this));
+    function createGroup() external {
+        semaphore.createGroup(groupId, 20, address(this));
+        groupId++;
     }
 
     function joinGroup(uint256 _groupId, uint256 identityCommitment) external {
@@ -29,7 +31,7 @@ contract ZeroKnowledgeCV {
     }
 
     function submitCV(
-        uint256 groupId,
+        uint256 _groupId,
         uint256 cvHash,
         uint256 merkleTreeRoot,
         uint256 nullifierHash,
@@ -37,7 +39,7 @@ contract ZeroKnowledgeCV {
         uint256 externalNullifier
     ) external {
         semaphore.verifyProof(
-            groupId,
+            _groupId,
             merkleTreeRoot,
             cvHash,
             nullifierHash,
