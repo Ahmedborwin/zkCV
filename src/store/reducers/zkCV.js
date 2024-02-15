@@ -10,6 +10,12 @@ export const zkCV = createSlice({
             isSuccess: false,
             isRejected: false,
             transactionHash: null
+        },
+        joinGroup: {
+            isLoading: false,
+            isSuccess: false,
+            isRejected: false,
+            transactionHash: null
         }
     },
     reducers: {
@@ -39,6 +45,27 @@ export const zkCV = createSlice({
             state.createGroup.isSuccess = false;
             state.createGroup.isRejected = true;
             state.createGroup.transactionHash = null;
+        },
+        joinGroupIsLoading: (state) => {
+            state.joinGroup.isLoading = true;
+            state.joinGroup.isSuccess = false;
+            state.joinGroup.isRejected = false;
+            state.joinGroup.transactionHash = null;
+        },
+        joinGroupSuccess: (state, action) => {
+            state.joinGroup.isLoading = false;
+            state.joinGroup.isSuccess = true;
+            state.joinGroup.isRejected = false;
+            state.joinGroup.transactionHash = action.payload.transactionHash;
+
+            // increment groupId
+            state.groupId = state.groupId + 1;
+        },
+        joinGroupRejected: (state) => {
+            state.joinGroup.isLoading = false;
+            state.joinGroup.isSuccess = false;
+            state.joinGroup.isRejected = true;
+            state.joinGroup.transactionHash = null;
         }
     }
 })
@@ -48,7 +75,10 @@ export const {
     setGroupId,
     createGroupIsLoading,
     createGroupSuccess,
-    createGroupRejected
+    createGroupRejected,
+    joinGroupIsLoading,
+    joinGroupSuccess,
+    joinGroupRejected
 } = zkCV.actions;
 
 export default zkCV.reducer;

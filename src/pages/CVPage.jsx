@@ -15,8 +15,6 @@ const CVPage = () => {
     const [avatarUrl, setAvatarUrl] = useState("");
     const [file, setFile] = useState(null);
 
-    console.log(file, "@@@@file")
-
     useEffect(() => {
         setAvatarUrl(`${UI_AVATARS}/?name=?&color=7F9CF5&background=EBF4FF`);
     }, []);

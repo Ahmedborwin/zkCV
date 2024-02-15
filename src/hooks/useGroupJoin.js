@@ -66,7 +66,6 @@ const useGroupJoin = () => {
     }, [])
 
     return {
-        identity,
         messages,
         loading,
         joinGroup,

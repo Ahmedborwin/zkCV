@@ -1,38 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 // Semaphore
-import useIdentity from "../hooks/useIdentity"
+import useIdentity from "../hooks/useIdentity";
 import { Group } from "@semaphore-protocol/group"
 
 // Components
-import SubmitButton from "./common/Button/SubmitButton"
-import FormField from "./common/Form/FormField"
-import FormBox from "./common/Form/FormBox"
-
-// Contracts
-import zkCV_ABI from "../config/zkCV_ABI.json"
-import zkCV_AddressList from "../config/zkCV_address.json"
-
-// Hooks
-import useAccount from "../hooks/useAccount";
+import SubmitButton from "./common/Button/SubmitButton";
+import FormField from "./common/Form/FormField";
+import FormBox from "./common/Form/FormBox";
 
 // Redux
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // Store
-import { createGroup } from "../store/interactions";
+import { createGroup, joinGroup } from "../store/interactions";
+import { selectProvider, selectGroupId, selectZKCV } from "../store/selectors";
 
-const CreateJobAdd = (jobAddCount = 0) => {
+const CreateJobAdd = () => {
     const dispatch = useDispatch();
 
-    const [editMode, setEditMode] = useState(false)
-    const [position, setPosition] = useState(null)
-    const [experience, setExperience] = useState(null)
+    const provider = useSelector(selectProvider);
+    const zkCV = useSelector(selectZKCV);
+    const groupId = useSelector(selectGroupId);
 
-    const [createGroupReady, setCreateGroupReady] = useState(false)
-    const [prepareCreateGroupReady, setPrepareCreateGroupReady] = useState(false)
+    const [editMode, setEditMode] = useState(false);
+    const [position, setPosition] = useState(null);
+    const [experience, setExperience] = useState(null);
+
+    const [createGroupReady, setCreateGroupReady] = useState(false);
+    const [prepareCreateGroupReady, setPrepareCreateGroupReady] = useState(false);
+
     const { identity } = useIdentity();
-
 
     const handlePostJobAdd = async () => {
         // Create Group
@@ -45,20 +43,14 @@ const CreateJobAdd = (jobAddCount = 0) => {
         const currentGroupId = groupId + 1;
 
         // Join Group
-        await JoinGroups(
-            provider,
+        await joinGroup(
+            provider, 
             zkCV,
             identity,
             currentGroupId,
-            dispatch
-        )
+            dispatch,
+        );
     }
-
-    useEffect(() => {
-        if (createGroupReady) {
-            createGroup()
-        }
-    }, [createGroupReady])
 
     return (
         <>

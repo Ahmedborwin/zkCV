@@ -11,7 +11,10 @@ import {
     setGroupId,
     createGroupIsLoading,
     createGroupSuccess,
-    createGroupRejected
+    createGroupRejected,
+    joinGroupIsLoading,
+    joinGroupSuccess,
+    joinGroupRejected
 } from "./reducers/zkCV";
 
 import {
@@ -25,7 +28,8 @@ import zkCV_address from "../config/zkCV_address.json";
 import semaphore_address from "../config/semaphore_address.json";
 
 export const loadProvider = (dispatch) => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.BrowserProvider(window.ethereum);
+
     dispatch(setProvider(provider));
 
     return provider;
@@ -76,9 +80,8 @@ export const createGroup = async (provider, zkCV, dispatch) => {
         dispatch(createGroupIsLoading());
 
         const signer = await provider.getSigner();
-        let transaction;
 
-        transaction = await zkCV.connect(signer)
+        const transaction = await zkCV.connect(signer)
             .createGroup();
 
         await transaction.wait();
@@ -86,5 +89,25 @@ export const createGroup = async (provider, zkCV, dispatch) => {
         dispatch(createGroupSuccess({ transactionHash: transaction.hash }));
     } catch (error) {
         dispatch(createGroupRejected(error.message));
+    }
+}
+
+// ------------------------------------------------------------------------------
+// JOIN GROUP
+export const joinGroup = async (provider, zkCV, identity, groupId, dispatch) => {
+    try {
+        dispatch(joinGroupIsLoading());
+
+        const signer = await provider.getSigner();
+        let transaction;
+
+        transaction = await zkCV.connect(signer)
+            .joinGroup(groupId, identity);
+
+        await transaction.wait();
+
+        dispatch(joinGroupSuccess({ transactionHash: transaction.hash }));
+    } catch (error) {
+        dispatch(joinGroupRejected(error.message));
     }
 }

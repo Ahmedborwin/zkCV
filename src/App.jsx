@@ -12,7 +12,10 @@ import { useDispatch } from 'react-redux';
 import {
   loadProvider,
   loadNetwork,
-  loadAccount
+  loadAccount,
+  loadZKCV,
+  loadSemaphore,
+  loadGroups
 } from './store/interactions';
 import { useAccount } from 'wagmi';
 
@@ -44,6 +47,12 @@ const App = () => {
     })
 
     if (chainId) {
+      // Initiate contracts
+      await loadSemaphore(provider, chainId, dispatch);
+      const zkCV = await loadZKCV(provider, chainId, dispatch);
+
+      // Load campaigns details
+      await loadGroups(zkCV, dispatch);
     }
   }
 

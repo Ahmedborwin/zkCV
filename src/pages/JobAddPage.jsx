@@ -1,5 +1,6 @@
 // Components
 import CreateJobAdd from "../components/CreateJobAdd";
+import ListJobAdds from "../components/ListJobAdds";
 import BentoGrid from "../components/common/Effects/BentoGrid";
 import FadeIn from "../components/common/Effects/FadeIn";
 
@@ -11,7 +12,7 @@ const JobAddPage = () => {
             </BentoGrid>
 
             <BentoGrid>
-                List Jobs
+                <ListJobAdds />
             </BentoGrid>
         </FadeIn>
     )
