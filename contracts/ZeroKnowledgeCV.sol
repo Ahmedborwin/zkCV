@@ -26,6 +26,7 @@ contract ZeroKnowledgeCV {
     mapping(string => uint256) public semaphoreIdToCVHash;
 
     event CVSubmitted(uint256 cvHash);
+    event ApplicantsChosen(uint256 groupId);
 
     constructor(address semaphoreAddress) {
         semaphore = ISemaphore(semaphoreAddress);
@@ -66,5 +67,14 @@ contract ZeroKnowledgeCV {
     function setChosenCVHash(uint256 _groupId, uint256[] calldata cvHashList) external {
         chosenCVHashes[_groupId] = cvHashList;
         vacancyIsLive[_groupId] = false;
+        emit ApplicantsChosen(_groupId);
+    }
+
+    function testPOPULATEUINT(string calldata semaphoreId, bytes32 _foo) external {
+        semaphoreIdToCVHash[semaphoreId] = uint256(_foo);
+    }
+
+    function testGetHASH(string calldata _sempahoreID) external view returns (bytes32) {
+        return bytes32(semaphoreIdToCVHash[_sempahoreID]);
     }
 }
