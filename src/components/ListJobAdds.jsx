@@ -1,34 +1,50 @@
 import React from "react"
-import { useAccount } from "wagmi"
+
+// Components
+import SemaphoreContainer from "./common/Container/Semaphore/SemaphoreContainer"
+import BentoGrid from "./common/Effects/BentoGrid"
+import Roadmap from "./Roadmap";
+
 // Redux
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 //store
-import { selectGroups, selectGroupId, selectZKCV } from "../store/selectors"
+import { selectGroups, selectGroupId } from "../store/selectors"
+import useSemaphore from "../hooks/useSemaphore";
+
 
 const ListJobAdds = () => {
-    const Vacancies = useSelector(selectGroupId)
+    const vacancies = useSelector(selectGroupId)
     const groups = useSelector(selectGroups)
-    const zkCV = useSelector(selectZKCV)
 
-    const { isConnected } = useAccount()
+    const {
+        users,
+        feedback,
+        refreshUsers,
+        addUser,
+        refreshFeedback,
+        addFeedback
+    } = useSemaphore();
 
-    //TODO - how can i use the selectGrousp to deal with this??
-    const handleVacancyDetails = async () => {
-        //check if vacancy is live
-        const isLive = await zkCV.vacancyIsLive(1)
-        if (isLive) {
-            const vancancy = await zkCV?.applicationMapping(1)
-            const vacancyDetails = {
-                Experience: vancancy[0],
-                Title: vancancy[1],
-            }
-        }
-    }
-
-    // Trigger initial load or state update
-    isConnected && handleVacancyDetails()
-
-    return <div>Number of applications: {Vacancies}</div>
+    return (
+        <SemaphoreContainer
+            title={`Number of vacancies: ${vacancies}`}
+            subTitle={`Vacancies`}
+        >
+            {groups.map(vacancy =>
+                <BentoGrid>
+                    <Roadmap />
+                    <div>
+                        Title: {vacancy.title.toUpperCase()}
+                    </div>
+                    <div>
+                        Experience: {vacancy.experience}
+                    </div>
+                    {/* <div>Proof: {refreshFeedback(vacancy.id)}</div> */}
+                    {/* <div>CV2</div> */}
+                </BentoGrid>
+            )}
+        </SemaphoreContainer>
+    )
 }
 
 export default ListJobAdds

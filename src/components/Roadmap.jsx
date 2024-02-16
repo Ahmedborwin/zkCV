@@ -88,7 +88,7 @@ const Roadmap = () => {
 
     return (
         <>
-            <div className="mx-8">
+            <div className="mx-2">
                 <h3 className="text-center text-xl font-bold mb-8">
                     Recruitment Progress
                 </h3>

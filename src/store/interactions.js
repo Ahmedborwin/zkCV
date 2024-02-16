@@ -12,6 +12,9 @@ import {
     joinGroupIsLoading,
     joinGroupSuccess,
     joinGroupRejected,
+    submitApplicationIsLoading,
+    submitApplicationSuccess,
+    submitApplicationRejected
 } from "./reducers/zkCV"
 
 import { setContract as setSemaphoreContract } from "./reducers/semaphore"
@@ -49,33 +52,51 @@ export const loadAccount = async (dispatch) => {
 // ------------------------------------------------------------------------------
 // LOAD CONTRACTS
 export const loadZKCV = async (provider, chainId, dispatch) => {
-    const zkCV = new ethers.Contract(zkCV_address[chainId], zkCV_ABI, provider)
+    const zkCV = new ethers.Contract(zkCV_address[chainId], zkCV_ABI, provider);
 
-    dispatch(setZKCVContract(zkCV))
+    dispatch(setZKCVContract(zkCV));
+
+    return zkCV;
 }
 
 export const loadSemaphore = async (provider, chainId, dispatch) => {
     const semaphore = new ethers.Contract(semaphore_address[chainId], semaphore_ABI, provider)
 
     dispatch(setSemaphoreContract(semaphore))
+
+    return semaphore;
 }
 
 // ------------------------------------------------------------------------------
 // LOAD GROUPS
 export const loadGroups = async (zkCV, dispatch) => {
-    const groupId = parseInt(await zkCV?.groupId())
-    console.log("groupId", groupId)
-    dispatch(setGroupId(groupId))
+    const groupId = parseInt(await zkCV?.groupId());
 
-    const groups = await zkCV.applicationMapping()
-    dispatch(setGroups(groups))
+    dispatch(setGroupId(groupId - 1));
+
+    let vacancies = [];
+    for (let id = 1; id < groupId; id++) {
+        // is live
+        const isLive = await zkCV.vacancyIsLive(id);
+
+        if (isLive) {
+            const vacancy = await zkCV.applicationMapping(id);
+            vacancies.push({
+                id: id,
+                experience: parseInt(vacancy[0]),
+                title: vacancy[1]
+            });
+        }
+    }
+
+    dispatch(setGroups(vacancies));
 }
 
 // ------------------------------------------------------------------------------
 // CREATE GROUP
 export const createGroup = async (provider, zkCV, experience, title, dispatch) => {
     try {
-        // dispatch(createGroupIsLoading())
+        dispatch(createGroupIsLoading())
 
         const signer = await provider.getSigner()
 
@@ -110,5 +131,32 @@ export const joinGroup = async (provider, zkCV, identity, groupId, dispatch) => 
         dispatch(joinGroupSuccess({ transactionHash: transaction.hash }))
     } catch (error) {
         dispatch(joinGroupRejected(error.message))
+    }
+}
+
+// ------------------------------------------------------------------------------
+// SUBMIT Application
+export const submitApplication = async (provider, zkCV, groupId, cvHash, merkleTreeRoot, nullifierHash, proof, externalNullifier, dispatch) => {
+    // nullifierHash = identity.commitment.toString()
+    try {
+        dispatch(submitApplicationIsLoading())
+
+        const signer = await provider.getSigner()
+
+        const transaction = await zkCV.connect(signer).submitCV(
+            groupId,
+            cvHash,
+            merkleTreeRoot,
+            nullifierHash,
+            proof,
+            externalNullifier
+        )
+        await transaction.wait()
+
+        dispatch(submitApplicationSuccess({ transaction: transaction.hash }))
+
+        return transaction.hash;
+    } catch (error) { 
+        dispatch(submitApplicationRejected())
     }
 }

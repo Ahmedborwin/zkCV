@@ -17,6 +17,8 @@ import {
     loadSemaphore,
     loadGroups,
 } from "./store/interactions"
+
+// Hooks
 import { useAccount } from "wagmi"
 
 const App = () => {
@@ -33,7 +35,7 @@ const App = () => {
             const zkCV = await loadZKCV(provider, chainId, dispatch)
 
             if (zkCV) {
-                const groupCounter = await loadGroups(zkCV, dispatch)
+                await loadGroups(zkCV, dispatch)
             }
         }
     }

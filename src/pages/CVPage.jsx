@@ -8,14 +8,17 @@ import FormField from "../components/common/Form/FormField"
 
 // Utils
 import { UI_AVATARS } from "../utils/constants"
-import FormFile from "../components/common/Form/FormFile"
 import FileUploader from "../components/FileUploader"
 import PinataUploader from "../components/UploadPinata"
 
+// Hooks
+import useIdentity from "../hooks/useIdentity"
+
 const CVPage = () => {
-    const [name, setName] = useState("John Doe")
     const [avatarUrl, setAvatarUrl] = useState("")
     const [file, setFile] = useState(null)
+
+    const { identity } = useIdentity();
 
     const handleFileUpload = (file) => {
         setFile(file)
@@ -24,6 +27,8 @@ const CVPage = () => {
     useEffect(() => {
         setAvatarUrl(`${UI_AVATARS}/?name=?&color=7F9CF5&background=EBF4FF`)
     }, [])
+
+    console.log(identity, '@@@@identity')
 
     return (
         <FadeIn>
@@ -35,7 +40,7 @@ const CVPage = () => {
                         className="w-40 h-40 rounded-full border-4 border-white shadow"
                     />
 
-                    <FormField value={name} onChange={(e) => setName(e.target.value)}>
+                    <FormField value={identity && identity.commitment.toString()}>
                         Identity
                     </FormField>
 
