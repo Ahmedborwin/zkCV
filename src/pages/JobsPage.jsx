@@ -15,11 +15,14 @@ import { joinGroup, submitApplication } from "../store/interactions"
 
 // Hooks
 import useIdentity from "../hooks/useIdentity"
+import useSemaphoreProofs from "../hooks/useSemaphoreProofs"
 
 //load group
 
 const JobsPage = () => {
     const dispatch = useDispatch();
+
+    const { generateAndVerifyProof, proof, error } = useSemaphoreProofs();
 
     const provider = useSelector(selectProvider);
     const zkCV = useSelector(selectZKCV);
