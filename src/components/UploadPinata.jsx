@@ -32,6 +32,7 @@ const PinataUploader = ({ file }) => {
 
             if (response.status === 200) {
                 setIpfsResponse(response.data) // Update state with the response
+                console.log(response.data.IpfsHash)
             } else {
                 console.error("Failed to upload file:", response)
                 setUploadStatus("Upload failed.")
@@ -40,27 +41,18 @@ const PinataUploader = ({ file }) => {
             console.error("Error uploading file:", error)
             setUploadStatus("Upload failed.")
         }
-
-        useEffect(() => {
-            if (_ipfsHash) {
-                return { decodedHash }
-            }
-        }, [_ipfsHash])
-
-        useEffect(() => {
-            if (ipfsResponse.data) {
-                const actualHash = bs58.decode(ipfsResponse.data).slice(2).toString("hex")
-
-                setDecodedHash(
-                    `0x${actualHash}` // Prefix with 0x for consistency
-                )
-                console.log("File uploaded to IPFS:", ipfsResponse)
-                console.log(decodedHash)
-                setUploadStatus("Upload successful!")
-                // Additional logic to handle the decoded hash...
-            }
-        }, [ipfsResponse]) // Depend on ipfsResponse and decodedHash
     }
+
+    useEffect(() => {
+        if (ipfsResponse) {
+            const actualHash = bs58.decode(ipfsResponse.IpfsHash).slice(2).toString("hex")
+            setDecodedHash(`0x${actualHash}`)
+
+            console.log(actualHash)
+            setUploadStatus("Upload successful!")
+            // What to do with the decoded hash here
+        }
+    }, [ipfsResponse])
 
     return (
         <div>
