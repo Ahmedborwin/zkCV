@@ -40,6 +40,7 @@
         "@rainbow-me/rainbowkit": "^1.0.11",
         "@reduxjs/toolkit": "^2.2.1",
         "@semaphore-protocol/data": "^4.0.0-alpha.7",
+        "bs58": "^5.0.0",
         "framer-motion": "^11.0.3",
         "hardhat": "^2.14.1",
         "prop-types": "^15.8.1",

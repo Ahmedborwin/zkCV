@@ -1,8 +1,3 @@
-import { EAS } from "@ethereum-attestation-service/eas-sdk"
-import useWalletConnected from "../hooks/useAccount"
-import EASAddressList from "../config/EASAddresses.json"
-//hooks
-
 const useEASSDK = () => {
     const { accountDetails, chain } = useWalletConnected()
 
@@ -13,7 +8,7 @@ const useEASSDK = () => {
 
     eas.connect(accountDetails.signer)
 
-    return { eas }
+    return <div>APPLY HERE</div>
 }
 
 export default useEASSDK

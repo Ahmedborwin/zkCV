@@ -24,7 +24,7 @@ async function main() {
     await zeroKnowledgeCV.deployed()
     console.log(`ZeroKnowledgeCV deployed to: ${zeroKnowledgeCV.address}`)
     //record new contract address and ABI
-    await updateContractInfo(semaphore.address, zeroKnowledgeCV.address)
+    await updateContractInfo(semaphore.address, zeroKnowledgeCV.address, semaphoreVerifierAddress)
 
     return { semaphore, zeroKnowledgeCV, semaphoreVerifierAddress }
 }

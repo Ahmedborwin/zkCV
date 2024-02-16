@@ -60,6 +60,8 @@ const TestAttestation = () => {
                 },
             ])
 
+            console.log(schemaId)
+
             const tx = await eas.attest({
                 schema: schemaId,
                 data: {
@@ -173,24 +175,16 @@ const TestAttestation = () => {
         <>
             <div>TestAttestation</div>
             <p>What do we need to test here?</p>
-            <SubmitButton onClick={() => handleSubmitSchema()}>
-                Submit Schema
-            </SubmitButton>
-            <SubmitButton onClick={() => handleAttestation()}>
-                Make Attestation
-            </SubmitButton>
-            <SubmitButton onClick={() => handleGetAttestation()}>
-                Get Attestation
-            </SubmitButton>
+            <SubmitButton onClick={() => handleSubmitSchema()}>Submit Schema</SubmitButton>
+            <SubmitButton onClick={() => handleAttestation()}>Make Attestation</SubmitButton>
+            <SubmitButton onClick={() => handleGetAttestation()}>Get Attestation</SubmitButton>
             <SubmitButton onClick={() => handleOffChainAttestation()}>
                 Make offChain Attestation
             </SubmitButton>
             <SubmitButton onClick={() => verifyOffChainAttestation()}>
                 Verify offChain Attestation
             </SubmitButton>
-            <SubmitButton onClick={() => handleGetSchema()}>
-                Handle Get Schema
-            </SubmitButton>
+            <SubmitButton onClick={() => handleGetSchema()}>Handle Get Schema</SubmitButton>
         </>
     )
 }

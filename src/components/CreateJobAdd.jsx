@@ -11,9 +11,6 @@ import FormBox from "./common/Form/FormBox"
 // Redux
 import { useDispatch, useSelector } from "react-redux"
 
-//ethers
-import { ethers } from "ethers"
-
 // Store
 import { createGroup, joinGroup } from "../store/interactions"
 import { selectProvider, selectGroupId, selectZKCV } from "../store/selectors"
@@ -33,8 +30,9 @@ const CreateJobAdd = () => {
 
     const handlePostJobAdd = async () => {
         // Create Group
-        await createGroup(provider, zkCV, ethers.toBigInt(experience), position, dispatch)
+        await createGroup(provider, zkCV, experience, position, dispatch)
 
+        //$$ why plus 1??
         const currentGroupId = groupId + 1
 
         // Join Group

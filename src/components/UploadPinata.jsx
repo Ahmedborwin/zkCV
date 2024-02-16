@@ -1,8 +1,13 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import axios from "axios"
+import bs58 from "bs58"
 
 const PinataUploader = ({ file }) => {
     const [uploadStatus, setUploadStatus] = useState("")
+    const [ipfsResponse, setIpfsResponse] = useState(null)
+    const [decodedHash, setDecodedHash] = useState(null)
+
+    // New state to hold the IPFS response
 
     const uploadToPinata = async () => {
         if (!file) {
@@ -16,7 +21,6 @@ const PinataUploader = ({ file }) => {
 
         try {
             setUploadStatus("Uploading...")
-            // You should replace `pinata_api_key` and `pinata_secret_api_key` with your actual Pinata API keys
             const response = await axios.post(url, data, {
                 headers: {
                     "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
@@ -27,8 +31,7 @@ const PinataUploader = ({ file }) => {
             })
 
             if (response.status === 200) {
-                console.log("File uploaded to IPFS:", response.data)
-                setUploadStatus("Upload successful!")
+                setIpfsResponse(response.data) // Update state with the response
             } else {
                 console.error("Failed to upload file:", response)
                 setUploadStatus("Upload failed.")
@@ -37,6 +40,26 @@ const PinataUploader = ({ file }) => {
             console.error("Error uploading file:", error)
             setUploadStatus("Upload failed.")
         }
+
+        useEffect(() => {
+            if (_ipfsHash) {
+                return { decodedHash }
+            }
+        }, [_ipfsHash])
+
+        useEffect(() => {
+            if (ipfsResponse.data) {
+                const actualHash = bs58.decode(ipfsResponse.data).slice(2).toString("hex")
+
+                setDecodedHash(
+                    `0x${actualHash}` // Prefix with 0x for consistency
+                )
+                console.log("File uploaded to IPFS:", ipfsResponse)
+                console.log(decodedHash)
+                setUploadStatus("Upload successful!")
+                // Additional logic to handle the decoded hash...
+            }
+        }, [ipfsResponse]) // Depend on ipfsResponse and decodedHash
     }
 
     return (
