@@ -28,11 +28,11 @@ const RoadmapContainer = styled.div`
     display: flex;
     flex-wrap: wrap; // Allow items to wrap in smaller screens
     justify-content: space-between;
-    gap: 20px;
-    margin: 20px 0;
+    gap: 10px;
+    margin: 10px 0;
 
     @media (max-width: 768px) {
-    gap: 10px; // Reduce gap on smaller screens
+    gap: 5px; // Reduce gap on smaller screens
     }
 `;
 
@@ -87,11 +87,11 @@ const Roadmap = () => {
     const role = useRole();
 
     return (
-        <>
+        <div className="">
             <div className="mx-2">
-                <h3 className="text-center text-xl font-bold mb-8">
+                <h5 className="text-center text-xl font-bold mb-8">
                     Recruitment Progress
-                </h3>
+                </h5>
 
                 <RoadmapContainer>
                     {stages.map((stage, index) => (
@@ -103,7 +103,7 @@ const Roadmap = () => {
                                 {index + 1}
                             </RoadmapStage>
 
-                            <div className="mt-2 text-sm">{stage}</div>
+                            <div className="mt-2 text-xs">{stage}</div>
                         </div>
                     ))}
                 </RoadmapContainer>
@@ -126,7 +126,7 @@ const Roadmap = () => {
                     </SubmitButton>
                 </div>
             }
-        </>
+        </div>
     );
 };
 
