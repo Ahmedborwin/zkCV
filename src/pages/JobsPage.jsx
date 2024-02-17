@@ -7,6 +7,7 @@ import SubmitButton from "../components/common/Button/SubmitButton"
 import { SemaphoreEthers } from "@semaphore-protocol/data"
 import { ethers } from "ethers"
 import SempaphoreAddressFile from "../config/semaphore_address.json"
+import { useState, useEffect } from "react"
 
 import { Buffer } from "buffer"
 window.Buffer = Buffer
@@ -24,16 +25,16 @@ import {
 } from "../store/selectors"
 import { joinGroup, submitApplication } from "../store/interactions"
 import { Group } from "@semaphore-protocol/group"
-// Semaphore
-import { Identity } from "@semaphore-protocol/identity"
+
 // Hooks
 import useIdentity from "../hooks/useIdentity"
-import useSemaphoreProofs from "../hooks/useSemaphoreProofs"
 import useAttestation from "../hooks/useAttestation"
 import useAccount from "../hooks/useAccount"
 
 const JobsPage = () => {
+    const [attestReady, setAttestReady] = useState(false)
     const dispatch = useDispatch()
+    const { attestToSchema } = useAttestation()
 
     const chainId = useSelector(selectChainId)
     const { accountDetails } = useAccount()
@@ -41,17 +42,16 @@ const JobsPage = () => {
     const zkCV = useSelector(selectZKCV)
     const vacancies = useSelector(selectGroupId)
     const groups = useSelector(selectGroups)
-
     const { identity } = useIdentity()
 
     const handleSubmitApplication = async (groupId) => {
         let fullProof
+
         const signal = localStorage.getItem("CVHash")
         const identityCommitment = identity.commitment.toString()
 
-        //TODO - make sure join group is called before calling api - has.wait is not working!!!
+        // //TODO - make sure join group is called before calling api - has.wait is not working!!!
         const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
-        await hash.wait(3)
 
         const semaphoreEthers = new SemaphoreEthers(
             "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
@@ -100,23 +100,11 @@ const JobsPage = () => {
                 dispatch
             )
             console.log("@@cv submitted - tx hash ", txHash)
+
+            setAttestReady(true)
         } catch (error) {
             console.error("Failed to generate and verify proof:", error)
         }
-    }
-
-    const getVerifiedProofs = async (groupId) => {
-        // submit CV by calling
-        const semaphoreEthers = new SemaphoreEthers(
-            "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
-            {
-                address: "0x4536F4cc7CE6c847d72fd54Ee84a8B2045d9CE8e",
-                startBlock: 0,
-            }
-        )
-
-        const verifiedProofs = await semaphoreEthers.getGroupVerifiedProofs(groupId.toString())
-        console.log(verifiedProofs)
     }
 
     const handleGenerateProof = async (groupId) => {
@@ -180,14 +168,14 @@ const JobsPage = () => {
         }
     }
 
-    const handleAttestToCV = async () => {
-        const identity = new Identity("Secret")
-        const identityCommitment = identity.commitment.toString()
-
-        // get cvHash from storage
-        const cvHash = localStorage.getItem("CVHash")
-        useAttestation(cvHash, identityCommitment)
-    }
+    useEffect(() => {
+        if (attestReady) {
+            const cvHash = localStorage.getItem("CVHash")
+            const identityCommitment = identity.commitment.toString()
+            attestToSchema(cvHash, identityCommitment, accountDetails.address.toString())
+            setAttestReady(false)
+        }
+    }, [attestReady])
 
     return (
         <FadeIn>

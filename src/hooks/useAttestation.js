@@ -10,21 +10,7 @@ const RECIPIENT = "0x5f2AF68dF96F3e58e1a243F4f83aD4f5D0Ca6029"
 
 //call this when submitting CV - pass hash of CV value and semaphore ID
 
-const useAttestation = (cvHash, Id) => {
-    const CVData = [
-        {
-            name: "hashCV",
-            value: Id,
-            type: "uint256",
-        },
-        {
-            name: "SempahoreId",
-            value: cvHash,
-            type: "string",
-        },
-        { name: "timeAttested", value: "", type: "uint256" },
-    ]
-    const [attestationUID, setAttestationUID] = useState(null)
+const useAttestation = () => {
     const [attestation, setAttestation] = useState(null)
     const [messages, setMessages] = useState(null)
 
@@ -34,12 +20,31 @@ const useAttestation = (cvHash, Id) => {
 
     const schema = schemaList[chain.id]
 
-    const attestToSchema = async (schemaId) => {
+    const attestToSchema = async (cvHash, Id, address, time) => {
+        const CVData = [
+            {
+                name: "hashCV",
+                value: cvHash,
+                type: "uint256",
+            },
+            {
+                name: "SempahoreId",
+                value: Id,
+                type: "string",
+            },
+            {
+                name: "userAddress",
+                value: address,
+                type: "string",
+            },
+            { name: "timeAttested", value: Date.now(), type: "uint256" },
+        ]
         try {
             // Initialize SchemaEncoder with the schema string
-            const schemaEncoder = new SchemaEncoder("string hashCV, string SempahoreId")
+            const schemaEncoder = new SchemaEncoder(
+                "uint256 hashCV, string SempahoreId ,string userAddress,uint256 timeAttested"
+            )
             const encodedData = schemaEncoder.encodeData([...CVData])
-
             const transaction = await eas.attest({
                 schema: schema,
                 data: {
@@ -51,20 +56,18 @@ const useAttestation = (cvHash, Id) => {
             })
 
             const newAttestationUID = await transaction.wait()
-
-            //TO DO - MAKE CLEAR TO CLIENT THEY NEED TO SAVE ATTESTATION
-            setAttestationUID(newAttestationUID)
-
+            //TODO - MAKE CLEAR TO CLIENT THEY NEED TO SAVE ATTESTATION
+            alert("SAVE THIS: ", newAttestationUID)
             console.log(`New attestation UID: ${newAttestationUID}`)
         } catch (messages) {
+            console.log(messages)
             setMessages(`Error while creating attestation: ${messages}`)
         }
     }
 
-    const fetchAttestation = async () => {
+    const fetchAttestation = async (attestationUID) => {
         try {
             const newAttestation = await eas.getAttestation(attestationUID)
-
             console.log(`Fetched attestation: ${newAttestation}`)
             setAttestation(newAttestation)
         } catch (messages) {
@@ -73,7 +76,6 @@ const useAttestation = (cvHash, Id) => {
     }
 
     return {
-        attestationUID,
         attestation,
         attestToSchema,
         fetchAttestation,

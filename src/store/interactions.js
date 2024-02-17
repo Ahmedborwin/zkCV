@@ -127,7 +127,7 @@ export const joinGroup = async (provider, zkCV, identity, groupId, dispatch) => 
 
         transaction = await zkCV.connect(signer).joinGroup(groupId, identity)
 
-        await transaction.wait()
+        await transaction.wait(1)
 
         dispatch(joinGroupSuccess({ transactionHash: transaction.hash }))
 
