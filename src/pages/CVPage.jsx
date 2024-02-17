@@ -18,7 +18,7 @@ const CVPage = () => {
     const [avatarUrl, setAvatarUrl] = useState("")
     const [file, setFile] = useState(null)
 
-    const { identity } = useIdentity();
+    const { identity } = useIdentity()
 
     const handleFileUpload = (file) => {
         setFile(file)
@@ -28,7 +28,7 @@ const CVPage = () => {
         setAvatarUrl(`${UI_AVATARS}/?name=?&color=7F9CF5&background=EBF4FF`)
     }, [])
 
-    console.log(identity, '@@@@identity')
+    console.log(identity, "@@@@identity")
 
     return (
         <FadeIn>
@@ -43,8 +43,6 @@ const CVPage = () => {
                     <FormField value={identity && identity.commitment.toString()}>
                         Identity
                     </FormField>
-
-                    {/* <FormFile onChange={(e) => setFile(e.target.files[0])}>Upload File</FormFile> */}
 
                     <FileUploader onFileUpload={handleFileUpload} />
                     {file && <PinataUploader file={file} />}

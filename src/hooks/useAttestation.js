@@ -9,21 +9,21 @@ import useAccount from "./useAccount"
 const RECIPIENT = "0x5f2AF68dF96F3e58e1a243F4f83aD4f5D0Ca6029"
 
 //call this when submitting CV - pass hash of CV value and semaphore ID
-const CVData = [
-    {
-        name: "hashCV",
-        value: "",
-        type: "uint256",
-    },
-    {
-        name: "SempahoreId",
-        value: "",
-        type: "string",
-    },
-    { name: "timeAttested", value: "", type: "uint256" },
-]
 
-const useAttestation = () => {
+const useAttestation = (cvHash, Id) => {
+    const CVData = [
+        {
+            name: "hashCV",
+            value: Id,
+            type: "uint256",
+        },
+        {
+            name: "SempahoreId",
+            value: cvHash,
+            type: "string",
+        },
+        { name: "timeAttested", value: "", type: "uint256" },
+    ]
     const [attestationUID, setAttestationUID] = useState(null)
     const [attestation, setAttestation] = useState(null)
     const [messages, setMessages] = useState(null)

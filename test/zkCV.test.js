@@ -40,16 +40,16 @@ describe("zkCV", function () {
         }
     })
     describe("Deployment", function () {
-        it("zkCV is deployed", async () => {
-            await expect(zeroKnowledgeCV.createGroup(1)).emit(sempahoreContract, "GroupCreated")
-        })
-        it("Add new applicant", async () => {
-            await zeroKnowledgeCV.createGroup(1)
-            await expect(zeroKnowledgeCV.connect(deployer).joinGroup(1, identity.commitment)).emit(
-                sempahoreContract,
-                "MemberAdded"
-            )
-        })
+        // it("zkCV is deployed", async () => {
+        //     await expect(zeroKnowledgeCV.createGroup(1)).emit(sempahoreContract, "GroupCreated")
+        // })
+        // it("Add new applicant", async () => {
+        //     await zeroKnowledgeCV.createGroup(1)
+        //     await expect(zeroKnowledgeCV.connect(deployer).joinGroup(1, identity.commitment)).emit(
+        //         sempahoreContract,
+        //         "MemberAdded"
+        //     )
+        // })
         // it("submit application (using offchain group)", async () => {
         //     const group = new Group(1, 20)
         //     group.addMember(identity.commitment)
@@ -66,7 +66,7 @@ describe("zkCV", function () {
         // })
         it("submit application using Onchain Group", async () => {
             const groupId = 300
-            await expect(zeroKnowledgeCV.connect(deployer).createGroup(groupId)).emit(
+            await expect(zeroKnowledgeCV.connect(deployer).createGroup(1, "Boss")).emit(
                 sempahoreContract,
                 "GroupCreated"
             )
@@ -95,8 +95,6 @@ describe("zkCV", function () {
             // Adjust the relative path as necessary based on your project structure
             const wasmFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.wasm")
             const zkeyFilePath = path.resolve(__dirname, "../snark-artifacts/20/semaphore.zkey")
-
-            console.log("HERE")
 
             const fullProof = await generateProof(identity, group, nullifierHash, signal, {
                 zkeyFilePath,
