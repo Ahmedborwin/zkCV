@@ -8,21 +8,19 @@ const useSemaphoreProofs = () => {
     const [error, setError] = useState(null)
     // Adjust the relative path as necessary based on your project structure
     // Use URL paths relative to the public directory
-    const wasmFilePath = "http://192.168.0.16:5175/public/semaphore.wasm"
-
-    const zkeyFilePath = "http://192.168.0.16:5175/public/semaphore.zkey"
-    const generateAndVerifyProof = useCallback(async (identity, group, nullifierHash, signal) => {
+    const snarkArtifacts = {
+        wasmFilePath: `https://www.trusted-setup-pse.org/semaphore/20/semaphore.wasm`,
+        zkeyFilePath: `https://www.trusted-setup-pse.org/semaphore/20/semaphore.zkey`,
+    }
+    const generateAndVerifyProof = useCallback(async (identity, group) => {
         try {
             const semaphoreProof = await import("@semaphore-protocol/proof")
-            const { generateProof, verifyProof } = semaphoreProof
+            const { generateProof } = semaphoreProof
 
-            const fullProof = await generateProof(identity, group, nullifierHash, signal)
-            // Assuming verifyProof is also being used correctly, uncomment when needed
-            // const verificationResult = await verifyProof(/* parameters for verifyProof */);
+            const fullProof = await generateProof(identity, group, 12, 12)
 
-            console.log("Generated Proof:")
             // console.log("Verification Result:", verificationResult);
-            setProof(fullProof)
+            setProof(proof)
         } catch (err) {
             console.error("Error generating or verifying proof:", err)
             setError(err)

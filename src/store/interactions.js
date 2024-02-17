@@ -24,6 +24,7 @@ import semaphore_ABI from "../config/semaphore_ABI.json"
 
 import zkCV_address from "../config/zkCV_address.json"
 import semaphore_address from "../config/semaphore_address.json"
+import { compactOffchainAttestationPackage } from "@ethereum-attestation-service/eas-sdk"
 
 export const loadProvider = (dispatch) => {
     const provider = new ethers.BrowserProvider(window.ethereum)
@@ -158,11 +159,12 @@ export const submitApplication = async (
         const transaction = await zkCV
             .connect(signer)
             .submitCV(groupId, cvHash, merkleTreeRoot, nullifierHash, proof, externalNullifier)
+
         await transaction.wait()
 
         dispatch(submitApplicationSuccess({ transaction: transaction.hash }))
 
-        return transaction.hash
+        return transaction
     } catch (error) {
         dispatch(submitApplicationRejected())
     }

@@ -10,7 +10,6 @@
     "license": "ISC",
     "devDependencies": {
         "@ethereum-attestation-service/eas-sdk": "^1.4.2",
-        "@semaphore-protocol/proof": "^4.0.0-alpha.8",
         "ethers": "^6.11.0"
     }
 }

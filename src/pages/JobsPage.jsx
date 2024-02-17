@@ -4,9 +4,12 @@ import FadeIn from "../components/common/Effects/FadeIn"
 import SemaphoreContainer from "../components/common/Container/Semaphore/SemaphoreContainer"
 import Roadmap from "../components/Roadmap"
 import SubmitButton from "../components/common/Button/SubmitButton"
-import { SemaphoreEthers, getSupportedNetworks } from "@semaphore-protocol/data"
+import { SemaphoreEthers } from "@semaphore-protocol/data"
 import { ethers } from "ethers"
 import SempaphoreAddressFile from "../config/semaphore_address.json"
+
+import { Buffer } from "buffer"
+window.Buffer = Buffer
 
 // Redux
 import { useDispatch, useSelector } from "react-redux"
@@ -27,100 +30,154 @@ import { Identity } from "@semaphore-protocol/identity"
 import useIdentity from "../hooks/useIdentity"
 import useSemaphoreProofs from "../hooks/useSemaphoreProofs"
 import useAttestation from "../hooks/useAttestation"
+import useAccount from "../hooks/useAccount"
 
 const JobsPage = () => {
     const dispatch = useDispatch()
 
-    const { generateAndVerifyProof, proof, error } = useSemaphoreProofs()
-
     const chainId = useSelector(selectChainId)
+    const { accountDetails } = useAccount()
+    const provider = useSelector(selectProvider)
     const zkCV = useSelector(selectZKCV)
     const vacancies = useSelector(selectGroupId)
     const groups = useSelector(selectGroups)
 
-    // const { identity } = useIdentity()
+    const { identity } = useIdentity()
 
     const handleSubmitApplication = async (groupId) => {
-        const identity = new Identity("Secret")
+        let fullProof
+        const signal = localStorage.getItem("CVHash")
         const identityCommitment = identity.commitment.toString()
 
-        // get cvHash from storage
-        const cvHash = localStorage.getItem("CVHash")
+        //TODO - make sure join group is called before calling api - has.wait is not working!!!
+        const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
+        await hash.wait(3)
 
-        // join group - call joinGroup from interactions
-        // const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
+        const semaphoreEthers = new SemaphoreEthers(
+            "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
+            {
+                address: SempaphoreAddressFile[chainId],
+                startBlock: 0,
+            }
+        )
 
-        const semaphoreEthers = new SemaphoreEthers("maticmum", {
-            address: SempaphoreAddressFile[chainId],
-            startBlock: 0,
-        })
+        const groupChain = await semaphoreEthers.getGroup(groupId.toString())
+        const groupRoot = groupChain.merkleTree.root
 
-        const members = await semaphoreEthers.getGroupMembers(groupId.toString())
+        try {
+            const requestBody = JSON.stringify({
+                identityPassword: accountDetails.address.toString(),
+                signal: signal,
+                group: groupId,
+                nullifier: accountDetails.address,
+            })
 
-        const group = new Group(groupId, 20, members)
+            const response = await fetch("http://localhost:3000/api/generateProof", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
 
-        const nullifierHash = 12345
-        const signal = 1234567
+                body: requestBody,
+            })
 
-        const fullProof = await generateAndVerifyProof(identity, group, nullifierHash, cvHash)
+            if (!response.ok) {
+                throw new Error("Failed to generate proof", JSON.stringify(response))
+            }
 
-        console.log("@@@proof", fullProof)
+            const fullProof = await response.json()
+            console.log("@@@@proof", fullProof)
 
-        // Ensure this function call is awaited and encapsulated in a try-catch block
-        // try {
-        //     const nullifierHash = "12345"
-        //     const signal = "1234567"
+            const txHash = await submitApplication(
+                provider,
+                zkCV,
+                groupId,
+                ethers.toBigInt(signal),
+                groupRoot,
+                fullProof.nullifierHash,
+                fullProof.proof,
+                fullProof.externalNullifier,
+                dispatch
+            )
+            console.log("@@cv submitted - tx hash ", txHash)
+        } catch (error) {
+            console.error("Failed to generate and verify proof:", error)
+        }
+    }
 
-        //     const requestBody = JSON.stringify(
-        //         {
-        //             identity: identity,
-        //             group: group,
-        //             nullifierHash: nullifierHash,
-        //             signal: signal,
-        //         },
-        //         replacer
-        //     ) // Assuming 'replacer' is a function you've defined for handling serialization
+    const getVerifiedProofs = async (groupId) => {
+        // submit CV by calling
+        const semaphoreEthers = new SemaphoreEthers(
+            "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
+            {
+                address: "0x4536F4cc7CE6c847d72fd54Ee84a8B2045d9CE8e",
+                startBlock: 0,
+            }
+        )
 
-        //     console.log("Sending request body:", requestBody)
+        const verifiedProofs = await semaphoreEthers.getGroupVerifiedProofs(groupId.toString())
+        console.log(verifiedProofs)
+    }
 
-        //     const response = await fetch("http://localhost:3000/api/generateProof", {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //         },
+    const handleGenerateProof = async (groupId) => {
+        let fullProof
+        const signal = localStorage.getItem("CVHash")
+        const identityCommitment = identity.commitment.toString()
 
-        //         body: requestBody,
-        //     })
-        //     console.log("@@@ server call 1", response)
-        //     if (!response.ok) {
-        //         throw new Error("Failed to generate proof", JSON.stringify(response))
-        //     }
+        //TODO - make sure join group is called before calling api
+        const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
+        await hash.wait(3)
 
-        //     const fullProof = await response.json()
-        //     console.log("@@@fullProof", fullProof)
-        //     return fullProof
-        // } catch (error) {
-        //     console.error("Failed to generate and verify proof:", error)
-        // }
+        const semaphoreEthers = new SemaphoreEthers(
+            "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
+            {
+                address: SempaphoreAddressFile[chainId],
+                startBlock: 0,
+            }
+        )
 
-        // // verify proof -
-        // const merkleTreeRoot = ""
-        // const nullifierHash = ""
-        // const externalNullifier = ""
-        // const proof = ""
+        const groupChain = await semaphoreEthers.getGroup(groupId.toString())
+        const groupRoot = groupChain.merkleTree.root
 
-        // // submit CV by calling
-        // submitApplication(
-        //     provider,
-        //     zkCV,
-        //     groupId,
-        //     cvHash,
-        //     merkleTreeRoot,
-        //     nullifierHash,
-        //     proof,
-        //     externalNullifier,
-        //     dispatch
-        // )
+        try {
+            const requestBody = JSON.stringify({
+                identityPassword: accountDetails.address.toString(),
+                signal: signal,
+                group: groupId,
+                nullifier: accountDetails.address,
+            })
+
+            const response = await fetch("http://localhost:3000/api/generateProof", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+
+                body: requestBody,
+            })
+
+            if (!response.ok) {
+                throw new Error("Failed to generate proof", JSON.stringify(response))
+            }
+
+            const fullProof = await response.json()
+            console.log("@@@@proof", fullProof)
+
+            const txHash = await submitApplication(
+                provider,
+                zkCV,
+                groupId,
+                ethers.toBigInt(signal),
+                groupRoot,
+                fullProof.nullifierHash,
+                fullProof.proof,
+                fullProof.externalNullifier,
+                dispatch
+            )
+            console.log("@@cv submitted - tx hash ", txHash)
+        } catch (error) {
+            console.error("Failed to generate and verify proof:", error)
+        }
     }
 
     const handleAttestToCV = async () => {
@@ -142,6 +199,9 @@ const JobsPage = () => {
                         <div>Experience: {vacancy.experience}</div>
                         <SubmitButton onClick={() => handleSubmitApplication(vacancy.id)}>
                             Apply for job
+                        </SubmitButton>
+                        <SubmitButton onClick={() => getVerifiedProofs(vacancy.id)}>
+                            verified Proofs
                         </SubmitButton>
                     </BentoGrid>
                 ))}

@@ -1,7 +1,11 @@
 const express = require("express")
 const cors = require("cors")
 const path = require("path")
+const hre = require("hardhat")
 const { generateProof } = require("@semaphore-protocol/proof")
+const { Group } = require("@semaphore-protocol/group")
+const { SemaphoreEthers, getSupportedNetworks } = require("@semaphore-protocol/data")
+const { Identity } = require("@semaphore-protocol/identity")
 const app = express()
 const port = process.env.PORT || 3000 // You can choose your port here
 
@@ -19,17 +23,39 @@ app.use(
 )
 
 app.post("/api/generateProof", async (req, res) => {
+    let zeroKnowledgeCV, zeroKnowledgeCVAddress, signer
+    const groupId = ethers.toNumber(req.body.group)
     try {
+        //----------------------------------------------------------------------
+
+        const identity = new Identity(req.body.identityPassword)
+        console.log(identity.commitment.toString())
+        console.log("@groupId", groupId)
+
+        const semaphoreEthers = new SemaphoreEthers(
+            "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
+            {
+                address: "0x4536F4cc7CE6c847d72fd54Ee84a8B2045d9CE8e",
+                startBlock: 0,
+            }
+        )
+
+        const members = await semaphoreEthers.getGroupMembers(groupId.toString())
+        const group = new Group(groupId, 20, members)
+
         // Adjust the relative path as necessary based on your project structure
         const wasmFilePath = path.resolve(__dirname, "../../snark-artifacts/20/semaphore.wasm")
         const zkeyFilePath = path.resolve(__dirname, "../../snark-artifacts/20/semaphore.zkey")
 
-        const parsedIdentity = req.body.identity
-        const parsedGroup = req.body.group
-        const nullifierHashB = ethers.toBigInt(req.body.nullifierHash)
-        const signalB = ethers.toBigInt(req.body.signal)
+        const signal = ethers.toBigInt(req.body.signal)
+        const nullifier = ethers.toBigInt(req.body.nullifier)
 
-        const fullProof = await generateProof(parsedIdentity, parsedGroup, nullifierHashB, signalB)
+        console.log(identity, group, signal, nullifier)
+
+        const fullProof = await generateProof(identity, group, nullifier, signal, {
+            zkeyFilePath,
+            wasmFilePath,
+        })
 
         // Check if fullProof is truthy and return it; otherwise, send a failure message
         if (fullProof) {

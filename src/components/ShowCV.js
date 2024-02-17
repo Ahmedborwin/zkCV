@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from "react"
 import bs58 from "bs58"
+import BN from "bn.js"
+import { Buffer } from "buffer"
+window.Buffer = Buffer
 
-const ShowCV = (_bytes32) => {
+const ShowCV = async (signal) => {
     const [ipfsHash, setIpfsHash] = useState("")
 
-    //TO DO
-    //the code we need to use to get the ipfshash from the bytes32
-    const decodeBytes32toIPFS = () => {
-        const hashHex = "1220" + _bytes32.slice(2)
-        const hashBytes = Buffer.from(hashHex, "hex")
-        setIpfsHash(bs58.encode(hashBytes))
-        return ipfsHash
-    }
+    const bs58 = await import("bs58")
+    const signal = verifiedProofs[0].signal
+    const signalBInt = new BN(signal, 10)
+    const bytes32Buffer = signalBInt.toArrayLike(Buffer, "be", 32)
+    const multihashPrefix = Buffer.from([0x12, 0x20])
+    const fullBuffer = Buffer.concat([multihashPrefix, bytes32Buffer])
 
-    useEffect(() => {
-        if (_bytes32) {
-            decodeBytes32toIPFS()
-        }
-    }, [_bytes32])
+    // Encode the resulting Buffer to a Base58 string to get the IPFS hash
+    const _ipfsHash = bs58.encode(fullBuffer)
+    setIpfsHash(_ipfsHash)
 }
 
 export default ShowCV
