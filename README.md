@@ -1,30 +1,27 @@
 <div align="center">
-  <a href="https://particle.network/">
-    <img src="https://i.imgur.com/xmdzXU4.png" />
-  </a>
+  <img src="https://gateway.pinata.cloud/ipfs/QmSv6BCXrPLhfdaicVdYQUEi7CsXN1m9LGEpwrEWPQs3yN" />
   <h3>
-    Particle RainbowKit Boilerplate
+    Zero Knowledge Curriculum Vitae (ZKCV)
   </h3>
 </div>
 
-⚡️ Boilerplate for a RainbowKit module with native [Particle Auth](https://docs.particle.network/developers/auth-service) integration. In this specific example, shortcuts for Apple, Google, and Facebook authentication are provided alongside a general Particle Auth configuration, represented as "Particle."
+⚡️ Zero Knowledge Curriculum Vitae (ZKCV) leverages cutting-edge zero-knowledge proofs to ensure unparalleled privacy and security for job seekers and employers. By integrating **Semaphore Protocol** with **Particle Auth**, ZKCV offers a revolutionary approach to professional networking and job application processes.
 
 Built using **RainbowKit** (+ Particle extension), **Wagmi**, **Typescript**, and **Particle Auth**.
 
-## 🔑 Particle Auth
-Particle Auth, a component of Particle Network's Wallet-as-a-Service, enables seamless onboarding to an application-embedded MPC-TSS/AA wallet facilitated by social login, such as Google, GitHub, email, phone number, etc.
+## 🔐 About ZKCV
+ZKCV is a platform that prioritizes user privacy while facilitating the seamless exchange of professional credentials. It utilizes zero-knowledge proofs to verify the authenticity of job applicants' information without revealing the actual data, ensuring a trustless and secure environment for both parties.
 
-👉 Try the demo: https://web-demo.particle.network/rainbowKit
-
-👉 Learn more about Particle Network: https://particle.network
-
-![Particle Auth Example](https://i.imgur.com/czZtg37.png)
+## 🌟 Features
+- **Privacy-first Approach:** Leveraging zero-knowledge proofs, ZKCV allows users to prove their qualifications without exposing sensitive information.
+- **Seamless Onboarding:** With Particle Auth integration, users can easily access ZKCV using social logins such as Google, GitHub, and more.
+- **Decentralized Verification:** Utilizes the Semaphore protocol for decentralized and tamper-proof verification of credentials.
 
 ## 🛠️ Quickstart
 
 ### Clone this repository
 ```
-git clone https://github.com/TABASCOatw/particle-rainbowkit-boilerplate.git
+git clone https://github.com/Ahmedborwin/zkCV
 ```
 
 ### Install dependencies
@@ -54,3 +51,13 @@ yarn dev
 
 ##
 Originally featured in "[Supercharging UX in 3, 2, and 6 minutes](https://twitter.com/TABASCOweb3/status/1707969225229529288)"
+
+## 🔗 Useful Links
+- **Semaphore Protocol:** Learn about the zero-knowledge protocol used in ZKCV. [Semaphore Documentation](https://semaphore.appliedzkp.org/)
+- **Particle Network:** Discover more about Particle Auth and its integration. [Particle Network](https://particle.network)
+
+## 📄 License
+ZKCV is open source and available under the MIT license.
+
+## 🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check [issues page](LINK_TO_YOUR_ISSUES_PAGE).
