@@ -32,9 +32,7 @@ const ListJobAdds = () => {
                     <ShowCV groupId={vacancy["id"]} />
 
                     {/* Roadmap Section */}
-                    <div className="mt-4">
-                        <Roadmap />
-                    </div>
+                    <Roadmap />
                 </div>
             ))}
         </SemaphoreContainer>

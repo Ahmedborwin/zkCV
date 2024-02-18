@@ -87,7 +87,7 @@ const Roadmap = () => {
     const role = useRole();
 
     return (
-        <div className="">
+        <div className="mt-4">
             <div className="mx-2">
                 <h3 className="text-lg font-semibold text-gray-300">
                     Roadmap:

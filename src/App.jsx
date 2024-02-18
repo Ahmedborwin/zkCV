@@ -51,6 +51,7 @@ const App = () => {
         const handleAccountsChanged = async () => {
             await loadAccount(dispatch)
             localStorage.removeItem("identity")
+            window.location.reload();
         }
 
         window.ethereum.on("chainChanged", handleChainChanged)
