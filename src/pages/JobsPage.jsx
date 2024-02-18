@@ -86,7 +86,6 @@ const JobsPage = () => {
             }
 
             const fullProof = await response.json()
-            console.log("@@@@proof", fullProof)
 
             const txHash = await submitApplication(
                 provider,
@@ -99,7 +98,6 @@ const JobsPage = () => {
                 fullProof.externalNullifier,
                 dispatch
             )
-            console.log("@@cv submitted - tx hash ", txHash)
 
             setAttestReady(true)
         } catch (error) {
@@ -149,9 +147,8 @@ const JobsPage = () => {
             }
 
             const fullProof = await response.json()
-            console.log("@@@@proof", fullProof)
 
-            const txHash = await submitApplication(
+            await submitApplication(
                 provider,
                 zkCV,
                 groupId,
@@ -162,7 +159,6 @@ const JobsPage = () => {
                 fullProof.externalNullifier,
                 dispatch
             )
-            console.log("@@cv submitted - tx hash ", txHash)
         } catch (error) {
             console.error("Failed to generate and verify proof:", error)
         }
@@ -179,21 +175,34 @@ const JobsPage = () => {
 
     return (
         <FadeIn>
-            <SemaphoreContainer title={`Number of vacancies: ${vacancies}`} subTitle={`Vacancies`}>
-                {groups.map((vacancy) => (
-                    <BentoGrid>
-                        <Roadmap />
-                        <div>Title: {vacancy.title.toUpperCase()}</div>
-                        <div>Experience: {vacancy.experience}</div>
-                        <SubmitButton onClick={() => handleSubmitApplication(vacancy.id)}>
-                            Apply for job
-                        </SubmitButton>
-                        <SubmitButton onClick={() => getVerifiedProofs(vacancy.id)}>
-                            verified Proofs
-                        </SubmitButton>
-                    </BentoGrid>
-                ))}
-            </SemaphoreContainer>
+            <BentoGrid>
+                <SemaphoreContainer title={`Number of vacancies: ${vacancies}`} className="mt-4">
+                    {groups.length === 0 &&
+                        <div className="text-center">Loading Data ...</div>
+                    }
+
+                    {groups.map((vacancy, index) => (
+                        <div key={index} className="my-4 bg-gray-800 p-5 rounded-lg shadow-lg">
+
+                            <div className="border-b border-gray-300 pb-4 mb-4">
+                                <h2 className="text-2xl font-bold text-gray-300">Role: {vacancy.title.toUpperCase()}</h2>
+                                <p className="text-md mt-1 text-gray-500">Experience: {vacancy.experience}</p>
+                            </div>
+
+                            {/* Roadmap Section */}
+                            <div className="border-b border-gray-300 pb-4 mb-4">
+                                <Roadmap />
+                            </div>
+
+                            <div className="flex justify-center">
+                                <SubmitButton onClick={() => handleSubmitApplication(vacancy.id)}>
+                                    Apply for job
+                                </SubmitButton>
+                            </div>
+                        </div>
+                    ))}
+                </SemaphoreContainer>
+            </BentoGrid>
         </FadeIn>
     )
 }

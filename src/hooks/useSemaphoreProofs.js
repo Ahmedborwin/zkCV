@@ -18,8 +18,6 @@ const useSemaphoreProofs = () => {
             const { generateProof } = semaphoreProof
 
             const fullProof = await generateProof(identity, group, 12, 12)
-
-            // console.log("Verification Result:", verificationResult);
             setProof(proof)
         } catch (err) {
             console.error("Error generating or verifying proof:", err)

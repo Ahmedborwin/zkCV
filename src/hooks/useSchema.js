@@ -41,7 +41,6 @@ const useSchema = () => {
     }
 
     const fetchSchema = async (_Schema) => {
-        console.log(_Schema)
         try {
             const schemaRegistry = new SchemaRegistry(SCHEMA_REGISTRY_CONTRACT_ADDRESS)
             schemaRegistry.connect(accountDetails.signer)

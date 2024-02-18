@@ -28,8 +28,6 @@ const CVPage = () => {
         setAvatarUrl(`${UI_AVATARS}/?name=?&color=7F9CF5&background=EBF4FF`)
     }, [])
 
-    console.log(identity, "@@@@identity")
-
     return (
         <FadeIn>
             <BentoGrid>

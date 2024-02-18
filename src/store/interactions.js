@@ -15,6 +15,9 @@ import {
     submitApplicationIsLoading,
     submitApplicationSuccess,
     submitApplicationRejected,
+    chooseApplicationsIsLoading,
+    chooseApplicationsSuccess,
+    chooseApplicationsRejected
 } from "./reducers/zkCV"
 
 import { setContract as setSemaphoreContract } from "./reducers/semaphore"
@@ -167,5 +170,33 @@ export const submitApplication = async (
         return transaction
     } catch (error) {
         dispatch(submitApplicationRejected())
+    }
+}
+
+// ------------------------------------------------------------------------------
+// CHOOSE Applications
+export const chooseApplications = async (
+    provider,
+    zkCV,
+    selectedCVList,
+    dispatch
+) => {
+    // nullifierHash = identity.commitment.toString()
+    try {
+        dispatch(chooseApplicationsIsLoading())
+
+        const signer = await provider.getSigner()
+
+        const transaction = await zkCV
+            .connect(signer)
+            .setChosenCVHash(selectedCVList)
+
+        await transaction.wait()
+
+        dispatch(chooseApplicationsSuccess({ transaction: transaction.hash }))
+
+        return transaction.hash;
+    } catch (error) {
+        dispatch(chooseApplicationsRejected())
     }
 }

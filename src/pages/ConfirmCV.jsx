@@ -20,7 +20,6 @@ const ConfirmCV = () => {
 
     const handleGetAttestation = () => {
         const _attestion = fetchAttestation(userInput)
-        console.log(_attestion)
         setAttestation(_attestion)
     }
 

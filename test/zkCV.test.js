@@ -49,7 +49,6 @@ describe("zkCV", function () {
             )
 
             zeroKnowledgeCVAddress = zeroKnowledgeCV.address
-            console.log("@@@zeroKnowledgeCVAddress", zeroKnowledgeCVAddress)
 
             sempahoreContract = await hre.ethers.getContractAt(
                 "Semaphore",
@@ -92,11 +91,8 @@ describe("zkCV", function () {
             //     "GroupCreated"
             // )
 
-            console.log("got here")
-
             await zeroKnowledgeCV.joinGroup(groupId, identity.commitment)
 
-            console.log("got here 2", identity.commitment)
             const semaphoreEthers = new SemaphoreEthers(
                 "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
                 {
@@ -134,7 +130,7 @@ describe("zkCV", function () {
                 fullProof.proof,
                 fullProof.externalNullifier
             )
-            console.log("submitting CV")
+
             //call submit application
             await expect(
                 zeroKnowledgeCV.submitCV(
@@ -148,7 +144,6 @@ describe("zkCV", function () {
             ).emit(zeroKnowledgeCV, "CVSubmitted")
 
             const verifiedProofs = await semaphoreEthers.getGroupVerifiedProofs(groupId.toString())
-            console.log(verifiedProofs)
         })
     })
 })

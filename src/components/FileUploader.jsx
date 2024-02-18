@@ -6,7 +6,6 @@ const FileUploader = ({ onFileUpload }) => {
         (acceptedFiles) => {
             // Assuming only one file is uploaded
             const file = acceptedFiles[0]
-            console.log(file)
             onFileUpload(file)
         },
         [onFileUpload]
