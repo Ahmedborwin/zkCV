@@ -5,9 +5,6 @@ import SemaphoreContainer from "./common/Container/Semaphore/SemaphoreContainer"
 import Roadmap from "./Roadmap";
 import ShowCV from "./ShowCV"
 
-// Icons
-import CVIcon from "../assets/cv-icon.jpg";
-
 // Redux
 import { useSelector } from "react-redux";
 

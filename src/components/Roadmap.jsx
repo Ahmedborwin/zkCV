@@ -79,7 +79,7 @@ const RoadmapStage = ({ isCurrent, isPrevious, children }) => {
 };
 
 const Roadmap = () => {
-    const [currentStage, setCurrentStage] = useState(1);
+    const [currentStage, setCurrentStage] = useState(0);
     const stages = ["Screening", "First Interview", "Technical Interview", "Discuss Offer", "Final Decision"];
 
     const handlePreviousStage = () => setCurrentStage(prevStage => Math.max(0, prevStage - 1));
