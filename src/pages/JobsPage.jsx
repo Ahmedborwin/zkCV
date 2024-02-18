@@ -51,7 +51,7 @@ const JobsPage = () => {
         const identityCommitment = identity.commitment.toString()
 
         // //TODO - make sure join group is called before calling api - has.wait is not working!!!
-        const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
+        // const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
 
         const semaphoreEthers = new SemaphoreEthers(
             "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
@@ -65,6 +65,7 @@ const JobsPage = () => {
         const groupRoot = groupChain.merkleTree.root
 
         try {
+            console.log("@@@address", accountDetails.address.toString())
             const requestBody = JSON.stringify({
                 identityPassword: accountDetails.address.toString(),
                 signal: signal,
@@ -112,7 +113,6 @@ const JobsPage = () => {
 
         //TODO - make sure join group is called before calling api
         const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
-        await hash.wait(3)
 
         const semaphoreEthers = new SemaphoreEthers(
             "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
@@ -168,7 +168,7 @@ const JobsPage = () => {
         if (attestReady) {
             const cvHash = localStorage.getItem("CVHash")
             const identityCommitment = identity.commitment.toString()
-            attestToSchema(cvHash, identityCommitment, accountDetails.address.toString())
+            attestToSchema(cvHash)
             setAttestReady(false)
         }
     }, [attestReady])

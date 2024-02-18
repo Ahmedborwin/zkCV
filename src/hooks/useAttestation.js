@@ -20,30 +20,17 @@ const useAttestation = () => {
 
     const schema = schemaList[chain.id]
 
-    const attestToSchema = async (cvHash, Id, address, time) => {
+    const attestToSchema = async (cvHash) => {
         const CVData = [
             {
                 name: "hashCV",
                 value: cvHash,
-                type: "uint256",
+                type: "bytes32",
             },
-            {
-                name: "SempahoreId",
-                value: Id,
-                type: "string",
-            },
-            {
-                name: "userAddress",
-                value: address,
-                type: "string",
-            },
-            { name: "timeAttested", value: Date.now(), type: "uint256" },
         ]
         try {
             // Initialize SchemaEncoder with the schema string
-            const schemaEncoder = new SchemaEncoder(
-                "uint256 hashCV, string SempahoreId ,string userAddress,uint256 timeAttested"
-            )
+            const schemaEncoder = new SchemaEncoder("bytes32 hashCV")
             const encodedData = schemaEncoder.encodeData([...CVData])
             const transaction = await eas.attest({
                 schema: schema,
@@ -68,9 +55,11 @@ const useAttestation = () => {
     const fetchAttestation = async (attestationUID) => {
         try {
             const attestationData = await eas.getAttestation(attestationUID)
+            //TODO
+            //when also need to get the address that creates attestation
             console.log(`Fetched attestation: ${attestationData[9]}`)
             setAttestation(attestationData)
-            return attestationData
+            return attestationData[9]
         } catch (messages) {
             setMessages(`Error while fetching attestation: ${messages}`)
         }

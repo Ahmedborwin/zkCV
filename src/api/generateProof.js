@@ -1,17 +1,15 @@
 const express = require("express")
 const cors = require("cors")
 const path = require("path")
-const hre = require("hardhat")
+
 const { generateProof } = require("@semaphore-protocol/proof")
 const { Group } = require("@semaphore-protocol/group")
 const { SemaphoreEthers, getSupportedNetworks } = require("@semaphore-protocol/data")
 const { Identity } = require("@semaphore-protocol/identity")
+const SempaphoreAddressFile = require("../config/semaphore_address")
 const app = express()
 const port = process.env.PORT || 3000 // You can choose your port here
 
-// Assuming "ethers" is needed for other parts of your application
-// Note: Importing "hardhat" in a production server script is unusual
-// Typically, you would use ethers.js directly without the hardhat environment
 const { ethers } = require("ethers")
 
 app.use(express.json())
@@ -27,7 +25,7 @@ app.post("/api/generateProof", async (req, res) => {
     const groupId = ethers.toNumber(req.body.group)
     try {
         //----------------------------------------------------------------------
-
+        console.log("req.body.identityPassword", req.body.identityPassword)
         const identity = new Identity(req.body.identityPassword)
 
         const semaphoreEthers = new SemaphoreEthers(
@@ -39,13 +37,16 @@ app.post("/api/generateProof", async (req, res) => {
         )
 
         const members = await semaphoreEthers.getGroupMembers(groupId.toString())
-        const group = new Group(groupId, 20, members)
+        // console.log("@@@@members", members)
 
+        const group = new Group(groupId, 20, members)
         // Adjust the relative path as necessary based on your project structure
         const wasmFilePath = path.resolve(__dirname, "../../snark-artifacts/20/semaphore.wasm")
         const zkeyFilePath = path.resolve(__dirname, "../../snark-artifacts/20/semaphore.zkey")
 
+        console.log("@@@signal", req.body.signal)
         const signal = ethers.toBigInt(req.body.signal)
+
         const nullifier = ethers.toBigInt(req.body.nullifier)
 
         const fullProof = await generateProof(identity, group, nullifier, signal, {
