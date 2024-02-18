@@ -29,8 +29,6 @@ app.post("/api/generateProof", async (req, res) => {
         //----------------------------------------------------------------------
 
         const identity = new Identity(req.body.identityPassword)
-        console.log(identity.commitment.toString())
-        console.log("@groupId", groupId)
 
         const semaphoreEthers = new SemaphoreEthers(
             "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
@@ -49,8 +47,6 @@ app.post("/api/generateProof", async (req, res) => {
 
         const signal = ethers.toBigInt(req.body.signal)
         const nullifier = ethers.toBigInt(req.body.nullifier)
-
-        console.log(identity, group, signal, nullifier)
 
         const fullProof = await generateProof(identity, group, nullifier, signal, {
             zkeyFilePath,

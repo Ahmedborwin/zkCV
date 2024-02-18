@@ -20,9 +20,29 @@ import { selectChainId } from "../store/selectors"
 
 const ShowCV = ({ groupId }) => {
     const [ipfsContentList, setIpfsContentList] = useState([])
-    const [semaphoreEthers, setSemaphoreEthers] = useState(null)
     const [verifiedProofs, setVerifiedProofs] = useState(null)
+    const [selectedCVs, setSelectedCVs] = useState(new Set());
     const chainId = useSelector(selectChainId)
+
+    // Toggle CV selection
+    const toggleCVSelection = (cv) => {
+        setSelectedCVs(prevSelectedCVs => {
+            const updatedSelectedCVs = new Set(prevSelectedCVs);
+            if (updatedSelectedCVs.has(cv)) {
+                updatedSelectedCVs.delete(cv);
+            } else {
+                updatedSelectedCVs.add(cv);
+            }
+            return updatedSelectedCVs;
+        });
+    };
+
+
+    // Handle "Select CVs" action
+    const handleSelectCVs = () => {
+        console.log("Selected CVs:", Array.from(selectedCVs));
+        // Further actions based on selected CVs
+    };
 
     useEffect(() => {
         const fetchIPFSHashes = async () => {
@@ -39,7 +59,6 @@ const ShowCV = ({ groupId }) => {
                     const ipfsHash = bs58.encode(fullBuffer)
                     hashList.push(`https://cf-ipfs.com/ipfs/${ipfsHash}`) // Fixed string concatenation
                 }
-                console.log(hashList)
                 setIpfsContentList(hashList)
             }
         }
@@ -71,19 +90,33 @@ const ShowCV = ({ groupId }) => {
     return (
         <div className="border-b border-gray-300 pb-4 mb-4">
             <h3 className="text-lg font-semibold text-gray-300">Applications:</h3>
-            {ipfsContentList.length === 0 && <div>Loading CVs ... </div>}
-            {ipfsContentList.length > 0 &&
-                <div className="flex flex-wrap gap-2 mt-2 justify-center">
-                    {ipfsContentList.map((content, cvIndex) => (
-                        <a href={content} target="_blank" rel="noopener noreferrer" key={cvIndex} className="flex items-center gap-2 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-150 ease-in-out">
+            
+            {ipfsContentList.length === 0 && <div>Loading CVs ...</div>}
+            
+            <div className="flex flex-wrap gap-2 mt-2">
+                {ipfsContentList.map((content, index) => (
+                    <div key={index} className="flex items-center gap-2 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-150 ease-in-out w-full max-w-s">
+                        <input
+                            type="checkbox"
+                            checked={selectedCVs.has(content)}
+                            onChange={() => toggleCVSelection(content)}
+                            className="form-checkbox h-5 w-5 text-blue-600"
+                        />
+                        <a href={content} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 truncate">
                             <img src={CVIcon} alt="CV Icon" className="w-6 h-6 rounded-full" />
                             {content}
                         </a>
-                    ))}
-                </div>
-            }
+                    </div>
+                ))}
+            </div>
+            
+            {selectedCVs.size > 0 && (
+                <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSelectCVs}>
+                    Select CVs
+                </button>
+            )}
         </div>
-    )
+    );
 }
 
 export default ShowCV

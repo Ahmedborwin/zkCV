@@ -98,7 +98,6 @@ const JobsPage = () => {
                 fullProof.externalNullifier,
                 dispatch
             )
-            console.log("@@cv submitted - tx hash ", txHash)
 
             setAttestReady(true)
         } catch (error) {
@@ -149,7 +148,7 @@ const JobsPage = () => {
 
             const fullProof = await response.json()
 
-            const txHash = await submitApplication(
+            await submitApplication(
                 provider,
                 zkCV,
                 groupId,
@@ -160,7 +159,6 @@ const JobsPage = () => {
                 fullProof.externalNullifier,
                 dispatch
             )
-            console.log("@@cv submitted - tx hash ", txHash)
         } catch (error) {
             console.error("Failed to generate and verify proof:", error)
         }

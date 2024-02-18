@@ -38,15 +38,11 @@ const PinataUploader = ({ file }) => {
             })
 
             if (response.status === 200) {
-                // Assuming response.data.IpfsHash is the IPFS hash you received
-                console.log("IPFS Hash Before:", response.data.IpfsHash)
-
                 // Decode Base58 IPFS hash to get the bytes
                 const bytes = bs58.decode(response.data.IpfsHash)
 
                 // Convert to hex, slice off the first 2 bytes, and ensure it fits into 32 bytes
                 const actualHash = "0x" + bytes.slice(2).toString("hex").substring(0, 64)
-                console.log("Bytes32 Hex:", actualHash)
 
                 setUploadStatus("Upload successful!")
                 // Additional logic to handle the decoded hash...

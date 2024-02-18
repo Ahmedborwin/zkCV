@@ -20,18 +20,10 @@ convertStringToBigInt(req.body)
 
 const { identity, group, nullifierHash, signal } = req.body
 
-console.log("@@@iden", identity)
-console.log("@@@parsedGroup", group)
-console.log("@@@nullifierHashB", nullifierHash)
-console.log("@@@signalB", signal)
-
 const parsedIdentity = identity
 const parsedGroup = group
 const nullifierHashB = ethers.toBigInt(nullifierHash)
 const signalB = ethers.toBigInt(signal)
-
-console.log("@@@nullifierHashB", nullifierHashB)
-console.log("@@@signalB", signalB)
 
 const fullProof = await generateProof(parsedIdentity, parsedGroup, 12345, 12345, {
     wasmFilePath: wasmFilePath,

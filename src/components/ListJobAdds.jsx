@@ -17,7 +17,6 @@ import { selectGroups, selectGroupId } from "../store/selectors";
 const ListJobAdds = () => {
     const vacancies = useSelector(selectGroupId);
     const groups = useSelector(selectGroups);
-    const CV_List = ['CV1', 'CV2', 'CV3']; // Adjust according to your actual data
 
     return (
         <SemaphoreContainer title={`Number of vacancies: ${vacancies}`}>
