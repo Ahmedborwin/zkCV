@@ -12,7 +12,8 @@ const useIdentity = () => {
         const identityString = localStorage.getItem("identity")
 
         if (identityString) {
-            const identity = new Identity(accountDetails.address.toString())
+            const identity = new Identity("secret")
+            localStorage.setItem("identity", identity.toString())
             setIdentity(identity)
             setMessages("Your Semaphore identity was retrieved from the browser cache 👌🏽")
         } else {
@@ -21,7 +22,7 @@ const useIdentity = () => {
     }, [])
 
     const createIdentity = useCallback(async () => {
-        const identity = new Identity(accountDetails.address.toString())
+        const identity = new Identity("secret")
         setIdentity(identity)
         localStorage.setItem("identity", identity.toString())
         setMessages("Your new Semaphore identity was just created 🎉")

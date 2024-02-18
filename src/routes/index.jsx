@@ -18,7 +18,7 @@ const PageRoutes = () => (
         <Navigation />
         <Routes>
             <Route exact path="/" element={<HomePage />} />
-            <Route path="/ConfirmCV" element={<ConfirmCV />} />
+            <Route path="/confirm-cv" element={<ConfirmCV />} />
             <Route path="/cv" element={<CVPage />} />
             <Route path="/job" element={<JobAddPage />} />
             <Route path="/jobs" element={<JobsPage />} />

@@ -37,7 +37,7 @@ const JobsPage = () => {
     const { attestToSchema } = useAttestation()
 
     const chainId = useSelector(selectChainId)
-    const { accountDetails } = useAccount()
+    const { accountDetails, chain } = useAccount()
     const provider = useSelector(selectProvider)
     const zkCV = useSelector(selectZKCV)
     const vacancies = useSelector(selectGroupId)
@@ -48,29 +48,30 @@ const JobsPage = () => {
         let fullProof
 
         const signal = localStorage.getItem("CVHash")
-        const identityCommitment = identity.commitment.toString()
 
-        // //TODO - make sure join group is called before calling api - has.wait is not working!!!
+        const identityCommitment = identity?.commitment.toString()
+
+        //TODO - make sure join group is called before calling api - has.wait is not working!!!
         // const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
 
         const semaphoreEthers = new SemaphoreEthers(
-            "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
+            "https://scroll-sepolia-testnet.rpc.thirdweb.com",
             {
                 address: SempaphoreAddressFile[chainId],
-                startBlock: 0,
+                startBlock: 3010006,
             }
         )
 
         const groupChain = await semaphoreEthers.getGroup(groupId.toString())
         const groupRoot = groupChain.merkleTree.root
-
+        console.log("groupRoot", groupRoot)
         try {
-            console.log("@@@address", accountDetails.address.toString())
             const requestBody = JSON.stringify({
                 identityPassword: accountDetails.address.toString(),
                 signal: signal,
                 group: groupId,
-                nullifier: accountDetails.address,
+                nullifier: accountDetails?.address,
+                chainId: chainId.toString(),
             })
 
             const response = await fetch("http://localhost:3000/api/generateProof", {
@@ -115,15 +116,16 @@ const JobsPage = () => {
         const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
 
         const semaphoreEthers = new SemaphoreEthers(
-            "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
+            "https://scroll-sepolia-testnet.rpc.thirdweb.com",
             {
                 address: SempaphoreAddressFile[chainId],
-                startBlock: 0,
+                startBlock: 3010006,
             }
         )
 
         const groupChain = await semaphoreEthers.getGroup(groupId.toString())
-        const groupRoot = groupChain.merkleTree.root
+        const groupRoot = groupChain?.merkleTree.root
+        console.log("groupRoot", groupRoot)
 
         try {
             const requestBody = JSON.stringify({
@@ -167,7 +169,7 @@ const JobsPage = () => {
     useEffect(() => {
         if (attestReady) {
             const cvHash = localStorage.getItem("CVHash")
-            const identityCommitment = identity.commitment.toString()
+
             attestToSchema(cvHash)
             setAttestReady(false)
         }
@@ -177,16 +179,17 @@ const JobsPage = () => {
         <FadeIn>
             <BentoGrid>
                 <SemaphoreContainer title={`Number of vacancies: ${vacancies}`} className="mt-4">
-                    {groups.length === 0 &&
-                        <div className="text-center">Loading Data ...</div>
-                    }
+                    {groups.length === 0 && <div className="text-center">Loading Data ...</div>}
 
                     {groups.map((vacancy, index) => (
                         <div key={index} className="my-4 bg-gray-800 p-5 rounded-lg shadow-lg">
-
                             <div className="border-b border-gray-300 pb-4 mb-4">
-                                <h2 className="text-2xl font-bold text-gray-300">Role: {vacancy.title.toUpperCase()}</h2>
-                                <p className="text-md mt-1 text-gray-500">Experience: {vacancy.experience}</p>
+                                <h2 className="text-2xl font-bold text-gray-300">
+                                    Role: {vacancy.title.toUpperCase()}
+                                </h2>
+                                <p className="text-md mt-1 text-gray-500">
+                                    Experience: {vacancy.experience}
+                                </p>
                             </div>
 
                             {/* Roadmap Section */}

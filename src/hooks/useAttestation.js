@@ -44,7 +44,7 @@ const useAttestation = () => {
 
             const newAttestationUID = await transaction.wait()
             //TODO - MAKE CLEAR TO CLIENT THEY NEED TO SAVE ATTESTATION
-            alert("SAVE THIS: ", newAttestationUID)
+            alert(`Attestation Id ${newAttestationUID} - Save This`)
             console.log(`New attestation UID: ${newAttestationUID}`)
         } catch (messages) {
             console.log(messages)
@@ -57,9 +57,9 @@ const useAttestation = () => {
             const attestationData = await eas.getAttestation(attestationUID)
             //TODO
             //when also need to get the address that creates attestation
-            console.log(`Fetched attestation: ${attestationData[9]}`)
+            console.log(`Fetched attestation: ${attestationData}`)
             setAttestation(attestationData)
-            return attestationData[9]
+            return attestationData
         } catch (messages) {
             setMessages(`Error while fetching attestation: ${messages}`)
         }
