@@ -23,6 +23,12 @@ export const zkCV = createSlice({
             isSuccess: false,
             isRejected: false,
             transactionHash: null
+        },
+        chooseApplications: {
+            isLoading: false,
+            isSuccess: false,
+            isRejected: false,
+            transactionHash: null
         }
     },
     reducers: {
@@ -93,11 +99,29 @@ export const zkCV = createSlice({
             state.submitApplication.transactionHash = action.payload.transactionHash;
         },
         submitApplicationRejected: (state) => {
-            state.submitApplication.isLoading = false;
-            state.submitApplication.isSuccess = false;
-            state.submitApplication.isRejected = true;
-            state.submitApplication.transactionHash = null;
-        }
+            state.chooseApplications.isLoading = false;
+            state.chooseApplications.isSuccess = false;
+            state.chooseApplications.isRejected = true;
+            state.chooseApplications.transactionHash = null;
+        },
+        chooseApplicationsIsLoading: (state) => {
+            state.chooseApplications.isLoading = true;
+            state.chooseApplications.isSuccess = false;
+            state.chooseApplications.isRejected = false;
+            state.chooseApplications.transactionHash = null;
+        },
+        chooseApplicationsSuccess: (state, action) => {
+            state.chooseApplications.isLoading = false;
+            state.chooseApplications.isSuccess = true;
+            state.chooseApplications.isRejected = false;
+            state.chooseApplications.transactionHash = action.payload.transactionHash;
+        },
+        chooseApplicationsRejected: (state) => {
+            state.chooseApplications.isLoading = false;
+            state.chooseApplications.isSuccess = false;
+            state.chooseApplications.isRejected = true;
+            state.chooseApplications.transactionHash = null;
+        },
     }
 })
 
@@ -113,7 +137,10 @@ export const {
     joinGroupRejected,
     submitApplicationIsLoading,
     submitApplicationSuccess,
-    submitApplicationRejected
+    submitApplicationRejected,
+    chooseApplicationsIsLoading,
+    chooseApplicationsSuccess,
+    chooseApplicationsRejected
 } = zkCV.actions;
 
 export default zkCV.reducer;
