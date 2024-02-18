@@ -8,12 +8,10 @@ import SemaphoreContainer from "../components/common/Container/Semaphore/Semapho
 
 // Hooks
 import useRole from "../hooks/useRole"
-import TestAttestation from "../components/TestAttestation"
-import Attestation from "../components/Attestation"
-import Schema from "../components/Schema"
 
 const HomePage = () => {
     const role = useRole() || ""
+
     return (
         <FadeIn>
             <BentoGrid>
@@ -25,10 +23,6 @@ const HomePage = () => {
 
             <BentoGrid>
                 <CreateIdentity />
-            </BentoGrid>
-            <BentoGrid>
-                <Schema />
-                <Attestation />
             </BentoGrid>
         </FadeIn>
     )

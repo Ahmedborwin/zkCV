@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
+import { ethers } from "ethers"
 import bs58 from "bs58"
 import SubmitButton from "./common/Button/SubmitButton"
 
 // Hooks
 import useIdentity from "../hooks/useIdentity"
+
+// Buffer
+import { Buffer } from "buffer"
+window.Buffer = Buffer
 
 const PinataUploader = ({ file }) => {
     const [uploadStatus, setUploadStatus] = useState("")
@@ -33,11 +38,19 @@ const PinataUploader = ({ file }) => {
             })
 
             if (response.status === 200) {
-                const actualHash = bs58.decode(response.data.IpfsHash).slice(2).toString("hex")
+                // Assuming response.data.IpfsHash is the IPFS hash you received
+                console.log("IPFS Hash Before:", response.data.IpfsHash)
+
+                // Decode Base58 IPFS hash to get the bytes
+                const bytes = bs58.decode(response.data.IpfsHash)
+
+                // Convert to hex, slice off the first 2 bytes, and ensure it fits into 32 bytes
+                const actualHash = "0x" + bytes.slice(2).toString("hex").substring(0, 64)
+                console.log("Bytes32 Hex:", actualHash)
 
                 setUploadStatus("Upload successful!")
                 // Additional logic to handle the decoded hash...
-                localStorage.setItem("CVHash", `0x${actualHash}`)
+                localStorage.setItem("CVHash", `${actualHash}`)
             } else {
                 console.error("Failed to upload file:", response)
                 setUploadStatus("Upload failed.")

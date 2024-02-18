@@ -14,7 +14,7 @@ import {
     joinGroupRejected,
     submitApplicationIsLoading,
     submitApplicationSuccess,
-    submitApplicationRejected
+    submitApplicationRejected,
 } from "./reducers/zkCV"
 
 import { setContract as setSemaphoreContract } from "./reducers/semaphore"
@@ -24,6 +24,7 @@ import semaphore_ABI from "../config/semaphore_ABI.json"
 
 import zkCV_address from "../config/zkCV_address.json"
 import semaphore_address from "../config/semaphore_address.json"
+import { compactOffchainAttestationPackage } from "@ethereum-attestation-service/eas-sdk"
 
 export const loadProvider = (dispatch) => {
     const provider = new ethers.BrowserProvider(window.ethereum)
@@ -52,11 +53,11 @@ export const loadAccount = async (dispatch) => {
 // ------------------------------------------------------------------------------
 // LOAD CONTRACTS
 export const loadZKCV = async (provider, chainId, dispatch) => {
-    const zkCV = new ethers.Contract(zkCV_address[chainId], zkCV_ABI, provider);
+    const zkCV = new ethers.Contract(zkCV_address[chainId], zkCV_ABI, provider)
 
-    dispatch(setZKCVContract(zkCV));
+    dispatch(setZKCVContract(zkCV))
 
-    return zkCV;
+    return zkCV
 }
 
 export const loadSemaphore = async (provider, chainId, dispatch) => {
@@ -64,32 +65,32 @@ export const loadSemaphore = async (provider, chainId, dispatch) => {
 
     dispatch(setSemaphoreContract(semaphore))
 
-    return semaphore;
+    return semaphore
 }
 
 // ------------------------------------------------------------------------------
 // LOAD GROUPS
 export const loadGroups = async (zkCV, dispatch) => {
-    const groupId = parseInt(await zkCV?.groupId());
+    const groupId = parseInt(await zkCV?.groupId())
 
-    dispatch(setGroupId(groupId - 1));
+    dispatch(setGroupId(groupId - 1))
 
-    let vacancies = [];
+    let vacancies = []
     for (let id = 1; id < groupId; id++) {
         // is live
-        const isLive = await zkCV.vacancyIsLive(id);
+        const isLive = await zkCV.vacancyIsLive(id)
 
         if (isLive) {
-            const vacancy = await zkCV.applicationMapping(id);
+            const vacancy = await zkCV.applicationMapping(id)
             vacancies.push({
                 id: id,
                 experience: parseInt(vacancy[0]),
-                title: vacancy[1]
-            });
+                title: vacancy[1],
+            })
         }
     }
 
-    dispatch(setGroups(vacancies));
+    dispatch(setGroups(vacancies))
 }
 
 // ------------------------------------------------------------------------------
@@ -126,9 +127,11 @@ export const joinGroup = async (provider, zkCV, identity, groupId, dispatch) => 
 
         transaction = await zkCV.connect(signer).joinGroup(groupId, identity)
 
-        await transaction.wait()
+        await transaction.wait(1)
 
         dispatch(joinGroupSuccess({ transactionHash: transaction.hash }))
+
+        return transaction.hash
     } catch (error) {
         dispatch(joinGroupRejected(error.message))
     }
@@ -136,27 +139,33 @@ export const joinGroup = async (provider, zkCV, identity, groupId, dispatch) => 
 
 // ------------------------------------------------------------------------------
 // SUBMIT Application
-export const submitApplication = async (provider, zkCV, groupId, cvHash, merkleTreeRoot, nullifierHash, proof, externalNullifier, dispatch) => {
+export const submitApplication = async (
+    provider,
+    zkCV,
+    groupId,
+    cvHash,
+    merkleTreeRoot,
+    nullifierHash,
+    proof,
+    externalNullifier,
+    dispatch
+) => {
     // nullifierHash = identity.commitment.toString()
     try {
         dispatch(submitApplicationIsLoading())
 
         const signer = await provider.getSigner()
 
-        const transaction = await zkCV.connect(signer).submitCV(
-            groupId,
-            cvHash,
-            merkleTreeRoot,
-            nullifierHash,
-            proof,
-            externalNullifier
-        )
+        const transaction = await zkCV
+            .connect(signer)
+            .submitCV(groupId, cvHash, merkleTreeRoot, nullifierHash, proof, externalNullifier)
+
         await transaction.wait()
 
         dispatch(submitApplicationSuccess({ transaction: transaction.hash }))
 
-        return transaction.hash;
-    } catch (error) { 
+        return transaction
+    } catch (error) {
         dispatch(submitApplicationRejected())
     }
 }

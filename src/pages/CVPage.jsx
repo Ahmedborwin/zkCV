@@ -18,7 +18,7 @@ const CVPage = () => {
     const [avatarUrl, setAvatarUrl] = useState("")
     const [file, setFile] = useState(null)
 
-    const { identity } = useIdentity();
+    const { identity } = useIdentity()
 
     const handleFileUpload = (file) => {
         setFile(file)

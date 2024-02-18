@@ -1,36 +1,37 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react"
 
 // Semaphore
-import { Identity } from "@semaphore-protocol/identity";
+import { Identity } from "@semaphore-protocol/identity"
+import useAccount from "../hooks/useAccount"
 
 const useIdentity = () => {
-    const [identity, setIdentity] = useState();
-    const [messages, setMessages] = useState("");
-
+    const [identity, setIdentity] = useState()
+    const [messages, setMessages] = useState("")
+    const { accountDetails } = useAccount()
     useEffect(() => {
-        const identityString = localStorage.getItem("identity");
+        const identityString = localStorage.getItem("identity")
 
         if (identityString) {
-            const identity = new Identity(identityString);
-            setIdentity(identity);
-            setMessages("Your Semaphore identity was retrieved from the browser cache 👌🏽");
+            const identity = new Identity(accountDetails.address.toString())
+            setIdentity(identity)
+            setMessages("Your Semaphore identity was retrieved from the browser cache 👌🏽")
         } else {
-            setMessages("Create your Semaphore identity 👆🏽");
+            setMessages("Create your Semaphore identity 👆🏽")
         }
-    }, []);
+    }, [])
 
     const createIdentity = useCallback(async () => {
-        const identity = new Identity();
-        setIdentity(identity);
-        localStorage.setItem("identity", identity.toString());
-        setMessages("Your new Semaphore identity was just created 🎉");
-    }, []);
+        const identity = new Identity(accountDetails.address.toString())
+        setIdentity(identity)
+        localStorage.setItem("identity", identity.toString())
+        setMessages("Your new Semaphore identity was just created 🎉")
+    }, [])
 
     return {
         identity,
         messages,
-        createIdentity
+        createIdentity,
     }
 }
 
-export default useIdentity;
+export default useIdentity

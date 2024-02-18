@@ -1,1 +1,144 @@
-[{"type":"constructor","payable":false,"inputs":[{"type":"address","name":"semaphoreAddress"}]},{"type":"event","anonymous":false,"name":"ApplicantsChosen","inputs":[{"type":"uint256","name":"groupId","indexed":false}]},{"type":"event","anonymous":false,"name":"CVSubmitted","inputs":[{"type":"uint256","name":"cvHash","indexed":false}]},{"type":"function","name":"applicationMapping","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256"}],"outputs":[{"type":"uint8","name":"yearsExperience"},{"type":"string","name":"postitionTitle"}]},{"type":"function","name":"chosenCVHashes","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256"},{"type":"uint256"}],"outputs":[{"type":"uint256"}]},{"type":"function","name":"createGroup","constant":false,"payable":false,"inputs":[{"type":"uint8","name":"_experience"},{"type":"string","name":"_title"}],"outputs":[]},{"type":"function","name":"groupId","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"uint256"}]},{"type":"function","name":"joinGroup","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"_groupId"},{"type":"uint256","name":"identityCommitment"}],"outputs":[]},{"type":"function","name":"semaphore","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"address"}]},{"type":"function","name":"semaphoreIdToCVHash","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"string"}],"outputs":[{"type":"uint256"}]},{"type":"function","name":"setChosenCVHash","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"_groupId"},{"type":"uint256[]","name":"cvHashList"}],"outputs":[]},{"type":"function","name":"submitCV","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"_groupId"},{"type":"uint256","name":"cvHash"},{"type":"uint256","name":"merkleTreeRoot"},{"type":"uint256","name":"nullifierHash"},{"type":"uint256[8]","name":"proof"},{"type":"uint256","name":"externalNullifier"}],"outputs":[]},{"type":"function","name":"testGetHASH","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"string","name":"_sempahoreID"}],"outputs":[{"type":"bytes32"}]},{"type":"function","name":"testPOPULATEUINT","constant":false,"payable":false,"inputs":[{"type":"string","name":"semaphoreId"},{"type":"bytes32","name":"_foo"}],"outputs":[]},{"type":"function","name":"vacancyIsLive","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256"}],"outputs":[{"type":"bool"}]}]
+[
+    {
+        "type": "constructor",
+        "payable": false,
+        "inputs": [{ "type": "address", "name": "semaphoreAddress" }]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "ApplicantsChosen",
+        "inputs": [{ "type": "uint256", "name": "groupId", "indexed": false }]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "CVSubmitted",
+        "inputs": [{ "type": "uint256", "name": "cvHash", "indexed": false }]
+    },
+    {
+        "type": "function",
+        "name": "applicationMapping",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [{ "type": "uint256" }],
+        "outputs": [
+            { "type": "uint8", "name": "yearsExperience" },
+            { "type": "string", "name": "postitionTitle" }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "chosenCVHashes",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [{ "type": "uint256" }, { "type": "uint256" }],
+        "outputs": [{ "type": "uint256" }]
+    },
+    {
+        "type": "function",
+        "name": "createGroup",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            { "type": "uint8", "name": "_experience" },
+            { "type": "string", "name": "_title" }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "groupId",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [{ "type": "uint256" }]
+    },
+    {
+        "type": "function",
+        "name": "joinGroup",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            { "type": "uint256", "name": "_groupId" },
+            { "type": "uint256", "name": "identityCommitment" }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "semaphore",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [{ "type": "address" }]
+    },
+    {
+        "type": "function",
+        "name": "semaphoreIdToCVHash",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [{ "type": "string" }],
+        "outputs": [{ "type": "uint256" }]
+    },
+    {
+        "type": "function",
+        "name": "setChosenCVHash",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            { "type": "uint256", "name": "_groupId" },
+            { "type": "uint256[]", "name": "cvHashList" }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "submitCV",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            { "type": "uint256", "name": "_groupId" },
+            { "type": "uint256", "name": "cvHash" },
+            { "type": "uint256", "name": "merkleTreeRoot" },
+            { "type": "uint256", "name": "nullifierHash" },
+            { "type": "uint256[8]", "name": "proof" },
+            { "type": "uint256", "name": "externalNullifier" }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "testGetHASH",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [{ "type": "string", "name": "_sempahoreID" }],
+        "outputs": [{ "type": "bytes32" }]
+    },
+    {
+        "type": "function",
+        "name": "testPOPULATEUINT",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            { "type": "string", "name": "semaphoreId" },
+            { "type": "bytes32", "name": "_foo" }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "vacancyIsLive",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [{ "type": "uint256" }],
+        "outputs": [{ "type": "bool" }]
+    }
+]

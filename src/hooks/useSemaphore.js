@@ -43,7 +43,6 @@ const useSemaphore = () => {
         })
 
         const proofs = await semaphore.getGroupVerifiedProofs(groupId)
-        console.log(proofs, "@@@@proofs")
 
         setFeedback(proofs.map(({ signal }) => ethers.decodeBytes32String(ethers.toBigInt(signal))))
     }, [])

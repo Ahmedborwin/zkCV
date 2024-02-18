@@ -1,8 +1,17 @@
 import React from "react";
+
+// Components
 import SemaphoreContainer from "./common/Container/Semaphore/SemaphoreContainer";
 import Roadmap from "./Roadmap";
+import ShowCV from "./ShowCV"
+
+// Icons
 import CVIcon from "../assets/cv-icon.jpg";
+
+// Redux
 import { useSelector } from "react-redux";
+
+// Store
 import { selectGroups, selectGroupId } from "../store/selectors";
 
 const ListJobAdds = () => {
@@ -24,17 +33,7 @@ const ListJobAdds = () => {
                     </div>
 
                     {/* Applications Section */}
-                    <div className="border-b border-gray-300 pb-4 mb-4">
-                        <h3 className="text-lg font-semibold text-gray-300">Applications:</h3>
-                        <div className="flex flex-wrap gap-2 mt-2 justify-center">
-                            {CV_List.map((cv, cvIndex) => (
-                                <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" key={cvIndex} className="flex items-center gap-2 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-150 ease-in-out">
-                                    <img src={CVIcon} alt="CV Icon" className="w-6 h-6 rounded-full" />
-                                    {cv}
-                                </a>
-                            ))}
-                        </div>
-                    </div>
+                    <ShowCV groupId={vacancy["id"]} />
 
                     {/* Roadmap Section */}
                     <div className="mt-4">
