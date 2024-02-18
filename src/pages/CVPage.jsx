@@ -28,8 +28,6 @@ const CVPage = () => {
         setAvatarUrl(`${UI_AVATARS}/?name=?&color=7F9CF5&background=EBF4FF`)
     }, [])
 
-    console.log(identity, '@@@@identity')
-
     return (
         <FadeIn>
             <BentoGrid>
@@ -43,8 +41,6 @@ const CVPage = () => {
                     <FormField value={identity && identity.commitment.toString()}>
                         Identity
                     </FormField>
-
-                    {/* <FormFile onChange={(e) => setFile(e.target.files[0])}>Upload File</FormFile> */}
 
                     <FileUploader onFileUpload={handleFileUpload} />
                     {file && <PinataUploader file={file} />}

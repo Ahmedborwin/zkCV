@@ -28,7 +28,6 @@ const Navigation = () => {
         {isEmployer(role) && (
           <>
             <NavLink to="/job">JOB</NavLink>
-            <NavLink to="/applicants">APPLICANTS</NavLink>
           </>
         )}
 

@@ -81,7 +81,7 @@ const RoadmapStage = ({ isCurrent, isPrevious, children }) => {
 const Roadmap = () => {
     const [currentStage, setCurrentStage] = useState(1);
     const stages = ["Screening", "First Interview", "Technical Interview", "Discuss Offer", "Final Decision"];
-  
+
     const handlePreviousStage = () => setCurrentStage(prevStage => Math.max(0, prevStage - 1));
     const handleNextStage = () => setCurrentStage(prevStage => Math.min(stages.length - 1, prevStage + 1));
     const role = useRole();
@@ -89,13 +89,12 @@ const Roadmap = () => {
     return (
         <div className="">
             <div className="mx-2">
-                <h5 className="text-center text-xl font-bold mb-8">
-                    Recruitment Progress
-                </h5>
-
+                <h3 className="text-lg font-semibold text-gray-300">
+                    Roadmap:
+                </h3>
                 <RoadmapContainer>
                     {stages.map((stage, index) => (
-                        <div key={index} className="flex flex-col items-center mx-4">
+                        <div key={index} className="flex flex-col items-center mx-2">
                             <RoadmapStage
                                 isCurrent={index === currentStage}
                                 isPrevious={index < currentStage}

@@ -8,11 +8,13 @@ import { selectGroups, selectGroupId } from "../store/selectors";
 const ListJobAdds = () => {
     const vacancies = useSelector(selectGroupId);
     const groups = useSelector(selectGroups);
-
     const CV_List = ['CV1', 'CV2', 'CV3']; // Adjust according to your actual data
 
     return (
         <SemaphoreContainer title={`Number of vacancies: ${vacancies}`}>
+            {groups.length === 0 &&
+                <div className="text-center">Loading Data ...</div>
+            }
             {groups.map((vacancy, index) => (
                 <div key={index} className="my-4 bg-gray-800 p-5 rounded-lg shadow-lg">
 
@@ -24,7 +26,7 @@ const ListJobAdds = () => {
                     {/* Applications Section */}
                     <div className="border-b border-gray-300 pb-4 mb-4">
                         <h3 className="text-lg font-semibold text-gray-300">Applications:</h3>
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-2 mt-2 justify-center">
                             {CV_List.map((cv, cvIndex) => (
                                 <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" key={cvIndex} className="flex items-center gap-2 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-150 ease-in-out">
                                     <img src={CVIcon} alt="CV Icon" className="w-6 h-6 rounded-full" />
