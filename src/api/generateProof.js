@@ -24,27 +24,27 @@ app.post("/api/generateProof", async (req, res) => {
     let zeroKnowledgeCV, zeroKnowledgeCVAddress, signer
     const groupId = ethers.toNumber(req.body.group)
     try {
+        console.log("----------- API START HERE -----------")
         //----------------------------------------------------------------------
-        console.log("req.body.identityPassword", req.body.identityPassword)
-        const identity = new Identity(req.body.identityPassword)
+
+        const identity = new Identity("secret")
 
         const semaphoreEthers = new SemaphoreEthers(
-            "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
+            "https://scroll-sepolia-testnet.rpc.thirdweb.com",
             {
-                address: "0x4536F4cc7CE6c847d72fd54Ee84a8B2045d9CE8e",
-                startBlock: 0,
+                address: SempaphoreAddressFile[req.body?.chainId],
+                startBlock: 3010006,
             }
         )
 
         const members = await semaphoreEthers.getGroupMembers(groupId.toString())
-        // console.log("@@@@members", members)
+        console.log("@@@@members", members)
 
         const group = new Group(groupId, 20, members)
         // Adjust the relative path as necessary based on your project structure
         const wasmFilePath = path.resolve(__dirname, "../../snark-artifacts/20/semaphore.wasm")
         const zkeyFilePath = path.resolve(__dirname, "../../snark-artifacts/20/semaphore.zkey")
 
-        console.log("@@@signal", req.body.signal)
         const signal = ethers.toBigInt(req.body.signal)
 
         const nullifier = ethers.toBigInt(req.body.nullifier)

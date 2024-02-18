@@ -22,17 +22,17 @@ const Navigation = () => {
                     <>
                         <NavLink to="/cv">CV</NavLink>
                         <NavLink to="/jobs">JOBS</NavLink>
+                        <NavLink to="/confirm-cv">Check Application</NavLink>
                     </>
                 )}
 
                 {isEmployer(role) && (
                     <>
                         <NavLink to="/job">JOB</NavLink>
-                        <NavLink to="/ConfirmCV">Check Application</NavLink>
                     </>
                 )}
 
-                <NavLink to="/about">ABOUT</NavLink>
+                {/* <NavLink to="/about">ABOUT</NavLink> */}
             </div>
 
             <div className="rainbowkit-box">
