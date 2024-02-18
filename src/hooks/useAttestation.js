@@ -67,9 +67,10 @@ const useAttestation = () => {
 
     const fetchAttestation = async (attestationUID) => {
         try {
-            const newAttestation = await eas.getAttestation(attestationUID)
-            console.log(`Fetched attestation: ${newAttestation}`)
-            setAttestation(newAttestation)
+            const attestationData = await eas.getAttestation(attestationUID)
+            console.log(`Fetched attestation: ${attestationData[9]}`)
+            setAttestation(attestationData)
+            return attestationData
         } catch (messages) {
             setMessages(`Error while fetching attestation: ${messages}`)
         }
