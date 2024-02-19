@@ -10,6 +10,9 @@ import { selectChainId } from "../store/selectors"
 import SemaphoreAddressFile from "../config/semaphore_address.json"
 import { SemaphoreEthers } from "@semaphore-protocol/data"
 
+//helpers
+import { networkConfig } from "../../helper-hardhat-config"
+
 export const useVerifiedProofs = (groupId) => {
     const [verifiedProofs, setVerifiedProofs] = useState(null)
     const [semaphoreEthers, setSemaphoreEthers] = useState(null)
@@ -17,14 +20,12 @@ export const useVerifiedProofs = (groupId) => {
 
     useEffect(() => {
         const fetchSemaphoreEthers = () => {
+            console.log("rpc url", networkConfig[chainId][rpcUrl])
             try {
-                const newSemaphoreEthers = new SemaphoreEthers(
-                    "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
-                    {
-                        address: SemaphoreAddressFile[chainId],
-                        startBlock: 0,
-                    }
-                )
+                const newSemaphoreEthers = new SemaphoreEthers(networkConfig[chainId][rpcUrl], {
+                    address: SemaphoreAddressFile[chainId],
+                    startBlock: 0,
+                })
                 setSemaphoreEthers(newSemaphoreEthers)
             } catch (error) {
                 console.error("Failed to fetch semaphore ethers:", error)

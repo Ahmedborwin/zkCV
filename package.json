@@ -11,6 +11,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
         "@nomicfoundation/hardhat-toolbox": "^2.0.2",
         "@openzeppelin/contracts": "^4.9.5",
         "@pinata/sdk": "^2.1.0",
@@ -37,6 +38,7 @@
         "vite": "^3.0.4"
     },
     "dependencies": {
+        "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
         "@particle-network/auth": "^1.2.1",
         "@particle-network/rainbowkit-ext": "^1.2.0",
         "@rainbow-me/rainbowkit": "^1.0.11",
