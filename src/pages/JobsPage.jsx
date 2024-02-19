@@ -64,7 +64,7 @@ const JobsPage = () => {
 
         const groupChain = await semaphoreEthers.getGroup(groupId.toString())
         const groupRoot = groupChain.merkleTree.root
-        console.log("groupRoot", groupRoot)
+
         try {
             const requestBody = JSON.stringify({
                 identityPassword: accountDetails.address.toString(),

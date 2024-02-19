@@ -19,10 +19,10 @@ export const useVerifiedProofs = (groupId) => {
         const fetchSemaphoreEthers = () => {
             try {
                 const newSemaphoreEthers = new SemaphoreEthers(
-                    "https://polygon-mumbai.g.alchemy.com/v2/zTPogX-iVpVC1-IGvBRCJYI6hX6DLNKP",
+                    "https://scroll-sepolia-testnet.rpc.thirdweb.com",
                     {
                         address: SemaphoreAddressFile[chainId],
-                        startBlock: 0,
+                        startBlock: 3010006,
                     }
                 )
                 setSemaphoreEthers(newSemaphoreEthers)
