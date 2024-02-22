@@ -6,7 +6,9 @@ import BentoGrid from "../components/common/Effects/BentoGrid"
 import FadeIn from "../components/common/Effects/FadeIn"
 import useAttestation from "../hooks/useAttestation"
 
-import { useSelector } from "react-redux"
+// Redux
+import { useDispatch, useSelector } from "react-redux"
+
 // Store
 import {
     selectProvider,
@@ -15,6 +17,8 @@ import {
     selectGroups,
     selectChainId,
 } from "../store/selectors"
+
+import { getChosenCV } from "../store/interactions"
 
 import useAccount from "../hooks/useAccount"
 
@@ -27,9 +31,12 @@ const ConfirmCV = () => {
     const [attestor, setAttestor] = useState()
     const [chosenCVReady, setChosenCVReady] = useState(false)
 
+    const dispatch = useDispatch()
+
+    //Selectors
     const provider = useSelector(selectProvider)
     const zkCV = useSelector(selectZKCV)
-    const vacancies = useSelector(selectGroupId)
+    const vacancyCount = useSelector(selectGroupId)
     const { accountDetails } = useAccount()
 
     const { fetchAttestation, messages } = useAttestation()
@@ -45,10 +52,10 @@ const ConfirmCV = () => {
         handleGetChosenCV()
     }
 
+    //TODO User interactionInstead
     const handleGetChosenCV = async () => {
         const signer = await provider.getSigner()
-        const tx = await zkCV.connect(signer).getChosenCVHash(vacancies)
-        setChosenCVList(tx)
+        const tx = await getChosenCV(provider, zkCV, vacancyCount, dispatch)
         setChosenCVReady(true)
     }
 

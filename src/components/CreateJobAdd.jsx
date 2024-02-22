@@ -32,11 +32,11 @@ const CreateJobAdd = () => {
         // Create Group
         await createGroup(provider, zkCV, experience, position, dispatch)
 
-        //$$ why plus 1??
+        //
         const currentGroupId = groupId + 1
 
         // Join Group
-        await joinGroup(provider, zkCV, identity.commitment, currentGroupId, dispatch)
+        // await joinGroup(provider, zkCV, identity.commitment, currentGroupId, dispatch)
     }
 
     return (

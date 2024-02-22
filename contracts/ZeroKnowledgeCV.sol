@@ -3,13 +3,7 @@ pragma solidity 0.8.23;
 
 import "./interfaces/ISemaphore.sol";
 
-/// @title Semaphore
-/// @dev This contract uses the Semaphore base contracts to provide a complete service
-/// to allow admins to create and manage groups and their members to generate Semaphore proofs
-/// and verify them. Group admins can add, update or remove group members, and can be
-/// an Ethereum account or a smart contract. This contract also assigns each new Merkle tree
-/// generated with a new root a duration (or an expiry) within which the proofs generated with that root
-/// can be validated.
+/// @title Semaphore.
 contract ZeroKnowledgeCV {
     ISemaphore public semaphore;
 
@@ -20,6 +14,13 @@ contract ZeroKnowledgeCV {
         string postitionTitle;
     }
 
+    enum ProfileSettings {
+        Employer,
+        Seeker
+    }
+
+    mapping(address => ProfileSettings) public userProfileMapping;
+    mapping(address => bool) public isRegistered;
     mapping(uint256 => ApplicationDetails) public applicationMapping;
     mapping(uint256 => bool) public vacancyIsLive;
     mapping(uint256 => bytes32[]) public chosenCVHashes;
@@ -30,6 +31,11 @@ contract ZeroKnowledgeCV {
     constructor(address semaphoreAddress) {
         semaphore = ISemaphore(semaphoreAddress);
         groupId = 1;
+    }
+
+    function createUserProfile(uint8 _profile) external {
+        userProfileMapping[msg.sender] = ProfileSettings(_profile);
+        isRegistered[msg.sender] = true;
     }
 
     function createGroup(uint8 _experience, string calldata _title) external {

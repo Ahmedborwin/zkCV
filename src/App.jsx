@@ -28,8 +28,9 @@ const App = () => {
 
     const loadBlockchainData = async () => {
         const provider = loadProvider(dispatch)
-        const chainId = await loadNetwork(provider, dispatch)
 
+        const chainId = await loadNetwork(provider, dispatch)
+        console.log("chainId", chainId)
         if (chainId) {
             await loadSemaphore(provider, chainId, dispatch)
             const zkCV = await loadZKCV(provider, chainId, dispatch)
@@ -51,7 +52,7 @@ const App = () => {
         const handleAccountsChanged = async () => {
             await loadAccount(dispatch)
             localStorage.removeItem("identity")
-            window.location.reload();
+            window.location.reload()
         }
 
         window.ethereum.on("chainChanged", handleChainChanged)

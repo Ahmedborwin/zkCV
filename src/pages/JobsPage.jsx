@@ -24,7 +24,6 @@ import {
     selectChainId,
 } from "../store/selectors"
 import { joinGroup, submitApplication } from "../store/interactions"
-import { Group } from "@semaphore-protocol/group"
 
 // Hooks
 import useIdentity from "../hooks/useIdentity"
@@ -37,7 +36,7 @@ const JobsPage = () => {
     const { attestToSchema } = useAttestation()
 
     const chainId = useSelector(selectChainId)
-    const { accountDetails, chain } = useAccount()
+    const { accountDetails } = useAccount()
     const provider = useSelector(selectProvider)
     const zkCV = useSelector(selectZKCV)
     const vacancies = useSelector(selectGroupId)
@@ -45,14 +44,11 @@ const JobsPage = () => {
     const { identity } = useIdentity()
 
     const handleSubmitApplication = async (groupId) => {
-        let fullProof
-
         const signal = localStorage.getItem("CVHash")
 
         const identityCommitment = identity?.commitment.toString()
 
-        //TODO - make sure join group is called before calling api - has.wait is not working!!!
-        // const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
+        const hash = await joinGroup(provider, zkCV, identityCommitment, groupId, dispatch)
 
         const semaphoreEthers = new SemaphoreEthers(
             "https://scroll-sepolia-testnet.rpc.thirdweb.com",
@@ -107,6 +103,7 @@ const JobsPage = () => {
         }
     }
 
+    //Cannot use until I can access semaphore proofs on the front end
     const handleGenerateProof = async (groupId) => {
         let fullProof
         const signal = localStorage.getItem("CVHash")
@@ -168,9 +165,12 @@ const JobsPage = () => {
 
     useEffect(() => {
         if (attestReady) {
-            const cvHash = localStorage.getItem("CVHash")
-
-            attestToSchema(cvHash)
+            const attestationResponse = attestToSchema()
+            if (attestationResponse === "No cvHash") {
+                console.log("No CV Hash")
+            } else {
+                console.log("attestationResponse")
+            }
             setAttestReady(false)
         }
     }, [attestReady])

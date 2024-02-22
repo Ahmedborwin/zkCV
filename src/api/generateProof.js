@@ -21,7 +21,6 @@ app.use(
 )
 
 app.post("/api/generateProof", async (req, res) => {
-    let zeroKnowledgeCV, zeroKnowledgeCVAddress, signer
     const groupId = ethers.toNumber(req.body.group)
     try {
         console.log("----------- API START HERE -----------")
@@ -38,7 +37,6 @@ app.post("/api/generateProof", async (req, res) => {
         )
 
         const members = await semaphoreEthers.getGroupMembers(groupId.toString())
-        console.log("@@@@members", members)
 
         const group = new Group(groupId, 20, members)
         // Adjust the relative path as necessary based on your project structure

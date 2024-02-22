@@ -18,9 +18,14 @@ const useAttestation = () => {
 
     const { chain } = useAccount()
 
-    const schema = schemaList[chain.id]
+    const schema = schemaList[chain?.id]
 
-    const attestToSchema = async (cvHash) => {
+    const attestToSchema = async () => {
+        // Get CVHash
+        const cvHash = localStorage.getItem("CVHash")
+        if (!cvHash) {
+            return "No cvHash"
+        }
         const CVData = [
             {
                 name: "hashCV",
@@ -44,8 +49,8 @@ const useAttestation = () => {
 
             const newAttestationUID = await transaction.wait()
             //TODO - MAKE CLEAR TO CLIENT THEY NEED TO SAVE ATTESTATION
+            return newAttestationUID
             alert(`Attestation Id ${newAttestationUID} - Save This`)
-            console.log(`New attestation UID: ${newAttestationUID}`)
         } catch (messages) {
             console.log(messages)
             setMessages(`Error while creating attestation: ${messages}`)

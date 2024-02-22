@@ -6,14 +6,18 @@ import EASAddressList from "../config/EASAddresses.json"
 const useEASSDK = () => {
     const { accountDetails, chain } = useWalletConnected()
 
-    const EASContractAddress = EASAddressList[chain.id]
+    const EASContractAddress = EASAddressList[chain?.id]
 
     // Initialize the sdk with the address of the EAS Schema contract address
-    const eas = new EAS(EASContractAddress)
+    if (EASContractAddress) {
+        const eas = new EAS(EASContractAddress)
 
-    eas.connect(accountDetails.signer)
+        eas?.connect(accountDetails.signer)
 
-    return { eas }
+        return { eas }
+    } else {
+        return {}
+    }
 }
 
 export default useEASSDK

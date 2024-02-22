@@ -18,6 +18,9 @@ import {
     chooseApplicationsIsLoading,
     chooseApplicationsSuccess,
     chooseApplicationsRejected,
+    getChosenCVIsLoading,
+    getChosenCVSuccess,
+    getChosenCVRejected,
 } from "./reducers/zkCV"
 
 import { setContract as setSemaphoreContract } from "./reducers/semaphore"
@@ -46,7 +49,7 @@ export const loadNetwork = async (provider, dispatch) => {
 export const loadAccount = async (dispatch) => {
     const accounts = await window.ethereum.request({ method: "eth_requestAccounts" })
     const account = ethers.getAddress(accounts[0])
-
+    console.log(account)
     dispatch(setAccount(account))
 
     return account
@@ -191,5 +194,28 @@ export const chooseApplications = async (provider, zkCV, groupId, selectedCVList
         return transaction.hash
     } catch (error) {
         dispatch(chooseApplicationsRejected())
+    }
+}
+// ------------------------------------------------------------------------------
+// Get Chosen CV's from ZKcv Contract
+export const getChosenCV = async (provider, zkCV, vacancyCount, dispatch) => {
+    console.log(provider, zkCV, selectedCVList)
+    try {
+        dispatch(getChosenCVIsLoading())
+
+        const signer = await provider.getSigner()
+
+        console.log(vacancyCount)
+
+        const cvHash = await zkCV.connect(signer).getChosenCVHash(vacancyCount)
+        console.log("@@@cvHash", cvHash)
+
+        await transaction.wait()
+
+        dispatch(getChosenCVSuccess({ transaction: transaction.hash }))
+
+        return transaction.hash
+    } catch (error) {
+        dispatch(getChosenCVRejected())
     }
 }
