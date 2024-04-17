@@ -3,7 +3,7 @@
   <h3>
     Zero Knowledge Curriculum Vitae (ZKCV)
   </h3>
-</div>
+</div> 
 
 ⚡️ Zero Knowledge Curriculum Vitae (ZKCV) leverages cutting-edge zero-knowledge proofs to ensure unparalleled privacy and security for job seekers and employers. By integrating **Semaphore Protocol** with **Particle Auth**, ZKCV offers a revolutionary approach to professional networking and job application processes.
 
